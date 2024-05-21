@@ -1,6 +1,7 @@
 class Cart:
     def __init__(self):
-        self.orders = {}  # {id, (order, state)}
+        # {id, (order, state)}
+        pass
 
     def get_orders(self, state=None):
         if state is None:

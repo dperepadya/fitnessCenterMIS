@@ -3,7 +3,6 @@ class FitnessCenter:
         self.name = name
         self.address = address
         self.email = email
-        self.services = {}
 
     @classmethod
     def empty(cls):

@@ -10,8 +10,6 @@ class User:
         self.phone = phone
         self.email = email
         self.funds = 0
-        self.cart = Cart.empty()
-        self.orders = Order.empty()
 
     def deposit(self, amount):
         self.funds = amount

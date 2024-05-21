@@ -1,8 +1,10 @@
 class Trainer:
-    def __init__(self, name):
+    def __init__(self, name, age, gender):
         self.name = name
-        self.schedule = []
-        self.rating = 0
+        self.age = age
+        self.age = gender
+        #self.schedule = []
+        #self.rating = 0
 
     def set_schedule(self, schedule):
         self.schedule = schedule

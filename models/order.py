@@ -1,7 +1,6 @@
 import uuid
 from datetime import datetime
 
-
 class Order:
     def __init__(self, username, address, date_of_birth, phone, email):
         self.id = str(uuid.uuid4())

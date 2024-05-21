@@ -3,6 +3,7 @@ import services as svs
 
 login_bp = Blueprint('login', __name__)
 
+
 # Get a Login form
 @login_bp.get('/')
 def get_login_form():
