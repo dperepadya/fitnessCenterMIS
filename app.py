@@ -1,9 +1,9 @@
 from flask import Flask
 
-from register.routes import register_bp
-from login.routes import login_bp
-from user.routes import user_bp
-from fitness_center.routes import fitness_center_bp
+from register.controllers import register_bp
+from login.controllers import login_bp
+from user.controllers import user_bp
+from fitness_center.controllers import fitness_center_bp
 
 app = Flask(__name__)
 

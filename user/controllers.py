@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session
-import services as svs
+from user.handlers import handlers as svs
 from models.user import User
 
 user_bp = Blueprint('user', __name__)

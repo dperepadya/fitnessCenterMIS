@@ -2,7 +2,7 @@ class Trainer:
     def __init__(self, name, age, gender):
         self.name = name
         self.age = age
-        self.age = gender
+        self.gender = gender
         #self.schedule = []
         #self.rating = 0
 
