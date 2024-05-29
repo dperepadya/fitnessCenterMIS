@@ -1,8 +1,8 @@
 class Mediator:
     def send(self, request):
         # Mediator to handle CQRS pattern
-        if isinstance(request, GetFitnessCenterServiceRequest):
-            from fitness_center.handlers.handlers import GetFitnessCenterServiceHandler
+        if isinstance(request, get_fitness_centers_from_db):
+            from fitness_center.handlers import GetFitnessCenterServiceHandler
             handler = GetFitnessCenterServiceHandler()
             return handler.handle(request)
         else:

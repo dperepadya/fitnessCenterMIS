@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify, request
-from fitness_center.handlers import handlers
+from flask import Blueprint, jsonify, request, session
+from fitness_center import handlers
 from models.fitness_center import FitnessCenter
 from models.service import Service
 from models.trainer import Trainer
@@ -9,11 +9,16 @@ fitness_center_bp = Blueprint('fitness_center', __name__)
 
 @fitness_center_bp.get('/')
 def get_fitness_centers_list():
-    fc_list = handlers.get_fitness_centers_from_db()
-    if fc_list:
-        return jsonify(fc_list)
+    user = session.get('user')  # User is defined after Login
+    if user is not None:
+        fc_list = handlers.get_fitness_centers_from_db(user['id'])
+        if fc_list is not None :
+            return jsonify(user['id'], fc_list), 200
+        else:
+            return jsonify({'message': 'Fitness centers list is empty'}), 404
     else:
-        return jsonify({'message': 'Fitness centers list is empty'}), 404
+        return jsonify({'message': 'User not logged in'}), 401
+
 
 
 @fitness_center_bp.post('/')
@@ -84,7 +89,6 @@ def edit_fitness_center_service():
 def delete_fitness_center_service(fc_id, serv_id):
     return handlers.delete_fitness_center_service_from_db(fc_id, serv_id)
 
-#9
 
 @fitness_center_bp.get('/<fc_id>/trainers')
 def get_fitness_center_trainers(fc_id):
@@ -122,7 +126,7 @@ def edit_fitness_center_trainer():
 def delete_fitness_center_trainer(fc_id, trainer_id):
     return handlers.delete_fitness_center_trainer_from_db(fc_id, trainer_id)
 
-15
+
 @fitness_center_bp.get('/<fc_id>/trainers/<trainer_id>/rating')
 def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
     return handlers.get_fitness_center_trainer_rating_from_db(fc_id, trainer_id)
@@ -145,11 +149,6 @@ def get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id):
 
 @fitness_center_bp.post('/<fc_id>/trainers/<trainer_id>/schedule')
 def set_fitness_center_trainer_schedule():
-    return True
-
-
-@fitness_center_bp.put('/<fc_id>/trainers/<trainer_id>/schedule')
-def modify_fitness_center_trainer_schedule_in_db(fc_id, trainer_id):
     return True
 
 
@@ -192,10 +191,6 @@ def edit_fitness_center_service_trainer(fc_id, serv_id, trainer_id):
 def delete_trainer_from_fitness_center_service(fc_id, serv_id, trainer_id):
     return handlers.delete_fitness_center_service_trainer_from_db(fc_id, serv_id, trainer_id)
 
-
-@fitness_center_bp.delete('/<fc_id>/services/<serv_id>')
-def delete_fitness_center_service(fc_id, serv_id):
-    return handlers.delete_fitness_center_service_from_db(fc_id, serv_id)
 
 
 

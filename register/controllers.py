@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from register.handlers import handlers as svs
+from register import handlers as svs
 from models.user import User
 
 register_bp = Blueprint('register', __name__)
@@ -9,7 +9,7 @@ register_bp = Blueprint('register', __name__)
 @register_bp.get('/')
 def get_registration_form():
     params = {'Name', 'Date of birth', 'Address', 'Phone', 'Email'}
-    return jsonify(params)
+    return params
 
 
 # Add a user to DB

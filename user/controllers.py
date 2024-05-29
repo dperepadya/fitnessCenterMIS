@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, session
-from user.handlers import handlers as svs
+from user import handlers as svs
 from models.user import User
 
 user_bp = Blueprint('user', __name__)
@@ -71,6 +71,7 @@ def get_user_cart():
 @user_bp.post('/cart')
 def add_user_cart_item():
     return svs.add_user_cart_item_to_db(request.json)
+
 
 
 @user_bp.get('/cart/<item_id>')
