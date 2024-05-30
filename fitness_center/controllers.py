@@ -42,11 +42,20 @@ def edit_fitness_center():
 
 @fitness_center_bp.get('/<fc_id>')
 def get_fitness_center_info(fc_id):
-    fc = handlers.get_fitness_center_from_db(fc_id)
-    if fc:
-        return jsonify(fc)
+    user = session.get('user')  # User is defined after Login
+    # if user is not None:
+    if True:
+        fc = handlers.get_fitness_center_from_db(fc_id)
+        if fc is not None:
+            # print(type(fc_list))
+            fc_str = Converter.convert_to_string(fc)
+            user_name = "" if user is None else user.name
+            # print(user_name, fc_list_str)
+            return jsonify({'message': f"Client: {user_name} Fitness center: id {fc_id} info: {fc_str}"}), 200
+        else:
+            return jsonify({'message': 'Fitness centers list is empty'}), 404
     else:
-        return jsonify({'message': 'Fitness center not found'}), 404
+        return jsonify({'message': 'User not logged in'}), 401
 
 
 @fitness_center_bp.get('/<fc_id>/bonuses')
@@ -59,16 +68,23 @@ def get_fitness_center_bonuses():
 
 
 @fitness_center_bp.get('/<fc_id>/services')
-def get_fitness_center_services():
-    fc = handlers.get_fitness_center_services_from_db()
-    if fc:
-        return jsonify(fc)
+def get_fitness_center_services(fc_id):
+    user = session.get('user')  # User is defined after Login
+    # if user is not None:
+    if True:
+        fc_services = handlers.get_fitness_center_services_from_db(fc_id)
+        if fc_services is not None:
+            fc_services_str = Converter.convert_to_string(fc_services)
+            user_name = "" if user is None else user.name
+            return jsonify({'message': f"{user_name} fitness center {fc_id} services: {fc_services_str}"}), 200
+        else:
+            return jsonify({'message': 'Fitness center services list is empty'}), 404
     else:
-        return jsonify({'message': 'Fitness center service not found'}), 404
+        return jsonify({'message': 'User not logged in'}), 401
 
 
 @fitness_center_bp.post('/<fc_id>/services')
-def add_fitness_center_service():
+def add_fitness_center_service(fc_id):
     serv_data = request.json
     serv = Service.empty()
     return handlers.add_fitness_center_service_to_db(serv)
@@ -76,11 +92,18 @@ def add_fitness_center_service():
 
 @fitness_center_bp.get('/<fc_id>/services/<serv_id>')
 def get_fitness_center_service_info(fc_id, serv_id):
-    fc = handlers.get_fitness_center_service_from_db(fc_id, serv_id)
-    if fc:
-        return jsonify(fc)
+    user = session.get('user')  # User is defined after Login
+    # if user is not None:
+    if True:
+        fc_service = handlers.get_fitness_center_service_from_db(fc_id, serv_id)
+        if fc_service is not None:
+            fc_service_str = Converter.convert_to_string(fc_service)
+            user_name = "" if user is None else user.name
+            return jsonify({'message': f"{user_name} fitness center {fc_id} service {serv_id}: {fc_service_str}"}), 200
+        else:
+            return jsonify({'message': 'Fitness center service not found'}), 404
     else:
-        return jsonify({'message': 'Fitness center services list is empty'}), 404
+        return jsonify({'message': 'User not logged in'}), 401
 
 
 @fitness_center_bp.put('/<fc_id>/services/<serv_id>')
@@ -97,11 +120,18 @@ def delete_fitness_center_service(fc_id, serv_id):
 
 @fitness_center_bp.get('/<fc_id>/trainers')
 def get_fitness_center_trainers(fc_id):
-    fc = handlers.get_fitness_center_trainers_from_db(fc_id)
-    if fc:
-        return jsonify(fc)
+    user = session.get('user')  # User is defined after Login
+    # if user is not None:
+    if True:
+        fc_trainers = handlers.get_fitness_center_trainers_from_db(fc_id)
+        if fc_trainers is not None:
+            fc_trainers_str = Converter.convert_to_string(fc_trainers)
+            user_name = "" if user is None else user.name
+            return jsonify({'message': f"{user_name} fitness center {fc_id} trainers: {fc_trainers_str}"}), 200
+        else:
+            return jsonify({'message': 'Fitness center trainers list is empty'}), 404
     else:
-        return jsonify({'message': 'Fitness center trainer not found'}), 404
+        return jsonify({'message': 'User not logged in'}), 401
 
 
 @fitness_center_bp.post('/<fc_id>/trainers')
@@ -113,6 +143,21 @@ def get_fitness_center_trainer():
 
 @fitness_center_bp.get('/<fc_id>/trainers/<trainer_id>')
 def get_fitness_center_trainer_info(fc_id, trainer_id):
+    user = session.get('user')  # User is defined after Login
+    # if user is not None:
+    if True:
+        fc_trainer = handlers.get_fitness_center_trainer_from_db(fc_id, trainer_id)
+        if fc_trainer is not None:
+            fc_trainer_str = Converter.convert_to_string(fc_trainer)
+            user_name = "" if user is None else user.name
+            return jsonify({'message': f"{user_name} fitness center {fc_id} trainer {trainer_id}:"
+                                       f" {fc_trainer_str}"}), 200
+        else:
+            return jsonify({'message': 'Fitness center trainer not found'}), 404
+    else:
+        return jsonify({'message': 'User not logged in'}), 401
+    
+    
     fc = handlers.get_fitness_center_trainer_from_db(fc_id, trainer_id)
     if fc:
         return jsonify(fc)
