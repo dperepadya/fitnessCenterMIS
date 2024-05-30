@@ -28,6 +28,6 @@ def login():
     user = hndl.authenticate(username, password)
     if user:
         session['user'] = user
-        return jsonify({'message': 'Login successful'}), 200
+        return jsonify({'message': f"{user['client_name']}: Login successful"}), 200
     else:
         return jsonify({'message': 'Invalid username or password'}), 401

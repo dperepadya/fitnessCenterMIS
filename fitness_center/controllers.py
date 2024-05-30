@@ -3,6 +3,7 @@ from fitness_center import handlers
 from models.fitness_center import FitnessCenter
 from models.service import Service
 from models.trainer import Trainer
+from utils.converters import Converter
 
 fitness_center_bp = Blueprint('fitness_center', __name__)
 
@@ -10,15 +11,19 @@ fitness_center_bp = Blueprint('fitness_center', __name__)
 @fitness_center_bp.get('/')
 def get_fitness_centers_list():
     user = session.get('user')  # User is defined after Login
-    if user is not None:
-        fc_list = handlers.get_fitness_centers_from_db(user['id'])
-        if fc_list is not None :
-            return jsonify(user['id'], fc_list), 200
+    # if user is not None:
+    if True:
+        fc_list = handlers.get_fitness_centers_from_db()
+        if fc_list is not None:
+            # print(type(fc_list))
+            fc_list_str = Converter.convert_to_string(fc_list)
+            user_name = "" if user is None else user.name
+            # print(user_name, fc_list_str)
+            return jsonify({'message': f"{user_name} {fc_list_str}"}), 200
         else:
             return jsonify({'message': 'Fitness centers list is empty'}), 404
     else:
         return jsonify({'message': 'User not logged in'}), 401
-
 
 
 @fitness_center_bp.post('/')

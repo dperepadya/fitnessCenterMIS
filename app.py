@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, session, request, jsonify
 
 from fitness_center.controllers import fitness_center_bp
@@ -6,6 +8,8 @@ from register.controllers import register_bp
 from user.controllers import user_bp
 
 app = Flask(__name__)
+
+app.secret_key = os.urandom(256)
 
 app.register_blueprint(register_bp, url_prefix='/register')
 app.register_blueprint(login_bp, url_prefix='/login')

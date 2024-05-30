@@ -1,14 +1,17 @@
-from databases.sqlite_utils import SQLLiteDatabase
+from database.sqlite_utils import SQLLiteDatabase
 from models.fitness_center import FitnessCenter
 from models.service import Service
 from models.trainer import Trainer
 from utils.query_generators import QueryGenerator as qg
 
 
-def get_fitness_centers_from_db(user_id):
+def get_fitness_centers_from_db():
     # db command
     with SQLLiteDatabase('fitnessdb.db') as db:
-        query = qg.get_select_sql_query('fitness_centers', None, {"user.id": user_id})
+        table = 'fitness_centers'
+        select_params = {'name': 'fc_name'}
+        query = qg.get_select_sql_query(table, select_params)
+        print(query)
         fc_list = db.fetch(query, True)
     return fc_list
 

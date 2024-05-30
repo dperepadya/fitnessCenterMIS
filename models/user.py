@@ -3,8 +3,8 @@ from models.order import Order
 
 
 class User:
-    def __init__(self, username, address, date_of_birth, phone, email):
-        self.name = username
+    def __init__(self, name, address, date_of_birth, phone, email):
+        self.name = name
         self.date_of_birth = date_of_birth
         self.address = address
         self.phone = phone
