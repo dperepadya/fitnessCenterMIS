@@ -129,7 +129,17 @@ def delete_fitness_center_trainer_from_db(fc_id, trainer_id):
 
 
 def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
-    return True
+    # db command
+    table = 'reviews'
+    select_params = {'clients.name': 'clients_name'}
+    join_tables = ['clients', 'trainers', 'fitness_centers']
+    join_params = {'client_id': 'id', 'trainer_id': 'id', 'fitness_center_id': 'id'}
+    where_cond = {'fitness_centers.id': fc_id, 'trainers.id': trainer_id}
+    query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        fc_serv_trainer = db.fetch(query)
+    return fc_serv_trainer
 
 
 def set_fitness_center_trainer_rating(fc_id, trainer_id):
@@ -153,7 +163,17 @@ def modify_fitness_center_schedule_rating_in_db(fc_id, schedule_id):
 
 
 def get_fitness_center_services_and_trainers_from_db(fc_id, serv_id):
-    return None
+    # db command
+    table = 'trainers'
+    select_params = {'trainers.name': 'trainer_name'}
+    join_tables = ['services', 'fitness_centers']
+    join_params = {'service_id': 'id', 'fitness_center_id': 'id'}
+    where_cond = {'fitness_centers.id': fc_id, 'services.id': serv_id}
+    query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        fc_serv_trainers = db.fetch(query, True)
+    return fc_serv_trainers
 
 
 def add_trainer_to_fitness_center_service_in_db(fc_id, serv_id, trainer):
@@ -161,7 +181,17 @@ def add_trainer_to_fitness_center_service_in_db(fc_id, serv_id, trainer):
 
 
 def get_fitness_center_service_trainer_from_db(fc_id, serv_id, trainer_id):
-    return None
+    # db command
+    table = 'trainers'
+    select_params = {'trainers.name': 'trainer_name'}
+    join_tables = ['services', 'fitness_centers']
+    join_params = {'service_id': 'id', 'fitness_center_id': 'id'}
+    where_cond = {'fitness_centers.id': fc_id, 'services.id': serv_id, 'trainers.id': trainer_id}
+    query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        fc_serv_trainer = db.fetch(query)
+    return fc_serv_trainer
 
 
 def modify_fitness_center_service_trainer_in_db(fc_id, serv_id, trainer_id):

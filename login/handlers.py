@@ -17,7 +17,7 @@ def authenticate(username, password):
 def get_user_from_db(username, password):
     # db command
     table = 'credentials'
-    select_params = {'clients.id': 'client_id', 'name': 'client_name'}
+    select_params = {'clients.id': 'client_id', 'name': 'client_name', 'funds': 'client_funds'}
     join_tables = ['clients']
     join_params = {'client_id': 'id'}
     where_cond = {'credentials.login': username, 'credentials.password': password}

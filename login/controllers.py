@@ -26,7 +26,7 @@ def login():
     # username = 'larry123'
     # password = '12345'
     user = hndl.authenticate(username, password)
-    if user:
+    if user is not None:
         session['user'] = user
         return jsonify({'message': f"{user['client_name']}: Login successful"}), 200
     else:
