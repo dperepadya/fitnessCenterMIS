@@ -1,7 +1,4 @@
-from flask import jsonify
-
 from database.sqlite_utils import SQLLiteDatabase
-from models.order import Order
 from utils.query_generators import QueryGenerator as qg
 
 

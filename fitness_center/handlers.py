@@ -1,7 +1,4 @@
 from database.sqlite_utils import SQLLiteDatabase
-from models.fitness_center import FitnessCenter
-from models.service import Service
-from models.trainer import Trainer
 from utils.query_generators import QueryGenerator as qg
 
 
@@ -131,15 +128,15 @@ def delete_fitness_center_trainer_from_db(fc_id, trainer_id):
 def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
     # db command
     table = 'reviews'
-    select_params = {'clients.name': 'clients_name'}
-    join_tables = ['clients', 'trainers', 'fitness_centers']
-    join_params = {'client_id': 'id', 'trainer_id': 'id', 'fitness_center_id': 'id'}
-    where_cond = {'fitness_centers.id': fc_id, 'trainers.id': trainer_id}
+    select_params = {'clients.name': 'client_name', 'reviews.grade': 'grade'}
+    join_tables = ['clients', 'trainers']
+    join_params = {'client_id': 'id', 'trainer_id': 'id'}
+    where_cond = {'trainers.fitness_center_id': fc_id, 'trainers.id': trainer_id}
     query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
     print(query)
     with SQLLiteDatabase('fitnessdb.db') as db:
-        fc_serv_trainer = db.fetch(query)
-    return fc_serv_trainer
+        fc_trainer_rating = db.fetch(query, True)
+    return fc_trainer_rating
 
 
 def set_fitness_center_trainer_rating(fc_id, trainer_id):
@@ -150,15 +147,26 @@ def modify_fitness_center_trainer_rating_in_db(fc_id, trainer_id):
     return True
 
 
-def get_fitness_center_schedule_rating_from_db(fc_id, schedule_id):
+def get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id):
+    # db command
+    table = 'schedules'
+    select_params = {'trainers.name': 'trainer_name', 'schedules.date': 'date', 'schedules.start_time': 'start_time',
+                     'schedules.end_time': 'end_time'}
+    join_tables = ['trainers']
+    join_params = {'trainer_id': 'id'}
+    where_cond = {'trainers.fitness_center_id': fc_id, 'trainers.id': trainer_id}
+    query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        fc_trainer_schedule = db.fetch(query, True)
+    return fc_trainer_schedule
+
+
+def add_fitness_center_trainer_schedule(fc_id, trainer_id):
     return True
 
 
-def set_fitness_center_schedule_rating(fc_id, schedule_id):
-    return True
-
-
-def modify_fitness_center_schedule_rating_in_db(fc_id, schedule_id):
+def modify_fitness_center_trainer_schedule_in_db(fc_id, trainer_id):
     return True
 
 

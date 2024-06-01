@@ -1,6 +1,3 @@
-import os
-import sqlite3
-
 from database.sqlite_utils import SQLLiteDatabase
 from utils.query_generators import QueryGenerator as qg
 

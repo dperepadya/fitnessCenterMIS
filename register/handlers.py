@@ -1,5 +1,4 @@
 from database.sqlite_utils import SQLLiteDatabase
-from models.user import User
 
 from utils.query_generators import QueryGenerator as qg
 

@@ -172,8 +172,19 @@ def delete_fitness_center_trainer(fc_id, trainer_id):
 
 @fitness_center_bp.get('/<fc_id>/trainers/<trainer_id>/rating')
 def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
-
-    return handlers.get_fitness_center_trainer_rating_from_db(fc_id, trainer_id)
+    user = session.get('user')  # User is defined after Login
+    # if user is not None:
+    if True:
+        fc_trainer_reviews = handlers.get_fitness_center_trainer_rating_from_db(fc_id, trainer_id)
+        if fc_trainer_reviews is not None:
+            fc_trainer_reviews_str = Converter.convert_to_string(fc_trainer_reviews)
+            user_name = "" if user is None else user.name
+            return jsonify({'message': f"{user_name} fitness center {fc_id} trainer {trainer_id}:"
+                                       f" reviews {fc_trainer_reviews_str}"}), 200
+        else:
+            return jsonify({'message': 'Fitness center trainer rating not found'}), 404
+    else:
+        return jsonify({'message': 'User not logged in'}), 401
 
 
 @fitness_center_bp.post('/<fc_id>/trainers/<trainer_id>/rating')
@@ -188,11 +199,24 @@ def modify_fitness_center_trainer_schedule_in_db(fc_id, trainer_id):
 
 @fitness_center_bp.get('/<fc_id>/trainers/<trainer_id>/schedule')
 def get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id):
-    return handlers.get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id)
+    user = session.get('user')  # User is defined after Login
+    # if user is not None:
+    if True:
+        fc_trainer_schedule = handlers.get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id)
+        if fc_trainer_schedule is not None:
+            fc_trainer_schedule_str = Converter.convert_to_string(fc_trainer_schedule)
+            user_name = "" if user is None else user.name
+            return jsonify({'message': f"{user_name} fitness center {fc_id} trainer {trainer_id}:"
+                                       f" schedule {fc_trainer_schedule_str}"}), 200
+        else:
+            return jsonify({'message': 'Fitness center trainer schedule not found'}), 404
+    else:
+        return jsonify({'message': 'User not logged in'}), 401
+
 
 
 @fitness_center_bp.post('/<fc_id>/trainers/<trainer_id>/schedule')
-def set_fitness_center_trainer_schedule():
+def add_fitness_center_trainer_schedule():
     return True
 
 
