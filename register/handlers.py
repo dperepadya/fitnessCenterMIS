@@ -8,8 +8,8 @@ def insert_to_db(user):
 
         query = qg.get_insert_sql_query('clients', {'name': user.name, 'address': user.address,
                                                     'date_of_birth': user.date_of_birth, 'phone': user.phone,
-                                                    'email': user.email})
+                                                    'email': user.email, 'funds': user.funds})
         print(query)
-        result = db.commit(query, False)
+        result = db.save(query)
 
     return result

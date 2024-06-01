@@ -36,7 +36,7 @@ def new_user():
     user = User(user_data['name'], user_data['date_of_birth'], user_data['address'], user_data['phone'],
                 user_data['email'])
     result = hndl.insert_to_db(user)
-    if result:
+    if result is not None:
         return jsonify({'message': f"New user {user.name}: created successfully"}), 201
     else:
         return jsonify({'message': 'Cannot create new user '}), 400
