@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, render_template
 from register import handlers as hndl
 from models.user import User
 
@@ -8,25 +8,7 @@ register_bp = Blueprint('register', __name__)
 # Get a Registration form
 @register_bp.get('/')
 def get_registration_form():
-    form = """<form action="/register" method="post">
-            <label for="name">Name:       </label>
-            <input type="text" id="name" name="name" required><br>
-            
-            <label for="date_of_birth">Date of birth:</label>          
-            <input type="date" id="date_of_birth" name="date_of_birth" required><br>  
-            
-            <label for="address">Address:     </label>
-            <input type="text" id="address" name="address" required><br>
-            
-            <label for="phone">Phone     :     </label>
-            <input type="text" id="phone" name="phone" required><br>
-            
-            <label for="email">e-mail     :     </label>
-            <input type="text" id="email" name="email" required><br>
-            
-            <input type="submit" value="Submit">
-            </form>"""
-    return form
+    return render_template('client_register.html')
 
 
 # Add a user to DB
