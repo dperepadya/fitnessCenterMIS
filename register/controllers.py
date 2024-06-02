@@ -7,17 +7,17 @@ register_bp = Blueprint('register', __name__)
 
 # Get a Registration form
 @register_bp.get('/')
-def get_registration_form():
+def get_user_registration_form():
     return render_template('client_register.html')
 
 
 # Add a user to DB
 @register_bp.post('/')
-def new_user():
+def add_user():
     user_data = request.form
     user = User(user_data['name'], user_data['date_of_birth'], user_data['address'], user_data['phone'],
                 user_data['email'])
-    result = hndl.insert_to_db(user)
+    result = hndl.insert_user_to_db(user)
     if result is not None:
         return jsonify({'message': f"New user {user.name}: created successfully"}), 201
     else:

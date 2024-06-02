@@ -4,7 +4,13 @@ from utils.query_generators import QueryGenerator as qg
 
 def get_user_from_db(user_id):
     # db command
-    user = None
+    table = 'clients'
+    params = None
+    where_conditions = {'id': user_id}
+    query = qg.get_select_sql_query(table, params, where_conditions)
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        user = db.fetch(query, False)
     if user:
         return user
     else:
@@ -12,10 +18,18 @@ def get_user_from_db(user_id):
 
 
 def update_user_in_db(user):
-    if user:
-        # db command
-        return True
-    return False
+    if user is None:
+        return False
+    # db command
+    query = qg.get_update_sql_query('clients',
+                                    {'name': user.name, 'date_of_birth': user.date_of_birth,
+                                     'address': user.address, 'phone': user.phone, 'email': user.email,
+                                     'funds': user.funds},
+                                    {"id": user.id})
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        result = db.save(query)
+    return result
 
 
 def get_user_cart_from_db(user):

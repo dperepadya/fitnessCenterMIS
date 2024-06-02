@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, session, render_template
+from flask import Blueprint, jsonify, request, session, render_template, redirect, url_for
 from login import handlers as hndl
 
 login_bp = Blueprint('login', __name__)
@@ -19,8 +19,8 @@ def login():
     # username = 'larry123'
     # password = '12345'
     user = hndl.authenticate(username, password)
-    if user is not None:
-        session['user'] = user
-        return jsonify({'message': f"{user['client_name']}: Login successful"}), 200
-    else:
-        return jsonify({'message': 'Invalid username or password'}), 401
+    if user is None:
+        return redirect(url_for('login.get_login_form'))
+    session['user'] = user
+    return jsonify({'message': f"{user['client_name']}: Login successful"}), 200
+

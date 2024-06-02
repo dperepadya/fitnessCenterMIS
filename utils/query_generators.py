@@ -11,7 +11,7 @@ class QueryGenerator:
         return str(value)
 
     # SELECT users.id AS user_id, users.name AS user_name
-    # get_sql_select_query('users', {'id': 1, 'name': 'Alex'}):
+    # get_sql_select_query('users', {'id': 'user_id', 'name': 'user_name'}):
     @staticmethod
     def get_sql_select_query(table, params):
         result = " * "
@@ -109,13 +109,13 @@ class QueryGenerator:
         for i, join_table in enumerate(params):  # merged table
             param = list(params.keys())[i]
             value = list(params.values())[i]
-            set_str = f"{param} = {value}"
+            set_str = f"{param} = {QueryGenerator.format_value(value)}"
             set_query.append(set_str)
         set_result = ' SET ' + ' , '.join(set_query)
 
         update_query = f'UPDATE {table}' + set_result
         if where_conditions is not None:
-            where_query = QueryGenerator.get_sql_where_multi_query(where_conditions)
+            where_query = QueryGenerator.get_sql_where_query(table, where_conditions)
             update_query += f" WHERE {where_query}"
 
         return update_query

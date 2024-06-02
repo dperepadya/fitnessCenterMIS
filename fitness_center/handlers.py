@@ -139,8 +139,17 @@ def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
     return fc_trainer_rating
 
 
-def set_fitness_center_trainer_rating(fc_id, trainer_id):
-    return True
+def add_fitness_center_trainer_rating(review):
+    if review is None:
+        return False
+
+    query = qg.get_insert_sql_query('reviews', {'date': review.date, 'grade': review.grade,
+                                                'comment': review.comment, 'client_id': review.client_id,
+                                                'trainer_id': review.trainer_id})
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        result = db.save(query)
+    return result
 
 
 def modify_fitness_center_trainer_rating_in_db(fc_id, trainer_id):
