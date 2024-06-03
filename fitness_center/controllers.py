@@ -184,7 +184,7 @@ def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
 def get_fitness_center_trainer_rating_form(fc_id, trainer_id):
     user = session.get('user')  # User is defined after Login
     user_id = user['client_id']
-    return render_template('add_trainer_review.html', user_id=user_id,
+    return render_template('trainer_review_add.html', user_id=user_id,
                            trainer_id=trainer_id, fc_id=fc_id)
 
 
