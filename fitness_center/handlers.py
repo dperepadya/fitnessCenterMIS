@@ -9,7 +9,7 @@ def get_fitness_centers_from_db():
         select_params = {'name': 'fc_name'}
         query = qg.get_select_sql_query(table, select_params)
         print(query)
-        fc_list = db.fetch(query, True)
+        fc_list = db.fetch(query)
     return fc_list
 
 
@@ -22,11 +22,11 @@ def get_fitness_center_from_db(fc_id):
     # db command
     table = 'fitness_centers'
     select_params = None
-    where_params = {'id': str(fc_id)}
+    where_params = {'id': fc_id}
     query = qg.get_select_sql_query(table, select_params, where_params)
     print(query)
     with SQLLiteDatabase('fitnessdb.db') as db:
-        fc = db.fetch(query)
+        fc = db.fetch(query, False)
     return fc
 
 
@@ -49,21 +49,23 @@ def get_fitness_center_services_from_db(fc_id):
     query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
     print(query)
     with SQLLiteDatabase('fitnessdb.db') as db:
-        fc_services = db.fetch(query, True)
+        fc_services = db.fetch(query)
     return fc_services
 
 
 def get_fitness_center_service_from_db(fc_id, serv_id):
     # db command
     table = 'services'
-    select_params = {'services.name': 'service_name'}
+    select_params = {'services.id': 'id', 'services.name': 'name', 'services.description': 'description',
+                     'services.duration': 'duration', 'services.price': 'price',
+                     'services.max_attendees': 'max_attendees', 'services.fitness_center_id': 'fc_id'}
     join_tables = ['fitness_centers']
     join_params = {'fitness_center_id': 'id'}
     where_cond = {'fitness_center_id': fc_id, 'services.id': serv_id}
     query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
     print(query)
     with SQLLiteDatabase('fitnessdb.db') as db:
-        fc_service = db.fetch(query)
+        fc_service = db.fetch(query, False)
     return fc_service
 
 
@@ -99,14 +101,16 @@ def get_fitness_center_trainers_from_db(fc_id):
 def get_fitness_center_trainer_from_db(fc_id, trainer_id):
     # db command
     table = 'trainers'
-    select_params = {'trainers.name': 'trainer_name'}
+    select_params = {'trainers.id': 'id', 'trainers.name': 'name', 'trainers.age': 'age',
+                     'trainers.gender': 'gender', 'trainers.fitness_center_id': 'fc_id',
+                     'trainers.service_id': 'service_id'}
     join_tables = ['fitness_centers']
     join_params = {'fitness_center_id': 'id'}
     where_cond = {'fitness_center_id': fc_id, 'trainers.id': trainer_id}
     query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
     print(query)
     with SQLLiteDatabase('fitnessdb.db') as db:
-        fc_trainer = db.fetch(query)
+        fc_trainer = db.fetch(query, False)
     return fc_trainer
 
 
@@ -199,15 +203,19 @@ def add_trainer_to_fitness_center_service_in_db(fc_id, serv_id, trainer):
 
 def get_fitness_center_service_trainer_from_db(fc_id, serv_id, trainer_id):
     # db command
+
     table = 'trainers'
-    select_params = {'trainers.name': 'trainer_name'}
+    select_params = {'trainers.id': 'id', 'trainers.name': 'name', 'trainers.age': 'age',
+                     'trainers.gender': 'gender', 'trainers.fitness_center_id': 'fc_id',
+                     'trainers.service_id': 'service_id'}
+
     join_tables = ['services', 'fitness_centers']
     join_params = {'service_id': 'id', 'fitness_center_id': 'id'}
     where_cond = {'fitness_centers.id': fc_id, 'services.id': serv_id, 'trainers.id': trainer_id}
     query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
     print(query)
     with SQLLiteDatabase('fitnessdb.db') as db:
-        fc_serv_trainer = db.fetch(query)
+        fc_serv_trainer = db.fetch(query, False)
     return fc_serv_trainer
 
 

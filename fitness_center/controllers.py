@@ -46,16 +46,15 @@ def edit_fitness_center():
 @fitness_center_bp.get('/<int:fc_id>')
 @check_user_login
 def get_fitness_center_info(fc_id):
-    fc = handlers.get_fitness_center_from_db(fc_id)
-    if fc is not None:
-        # print(type(fc_list))
-        fc_str = Converter.convert_to_string(fc)
-        user = session.get('user')
-        user_name = user['client_name']
-        # print(user_name, fc_list_str)
-        return jsonify({'message': f"Client: {user_name} Fitness center: id {fc_id} info: {fc_str}"}), 200
-    else:
-        return jsonify({'message': 'Fitness centers list is empty'}), 404
+    fc_info = handlers.get_fitness_center_from_db(fc_id)
+    if fc_info is None:
+        return jsonify({'message': 'Cannot find a fitness centers'}), 404
+    # fc_str = Converter.convert_to_string(fc)
+    # user = session.get('user')
+    # user_name = user['client_name']
+    # print(user_name, fc_list_str)
+    # return jsonify({'message': f"Client: {user_name} Fitness center: id {fc_id} info: {fc_str}"}), 200
+    return render_template('fitness_center_info.html', fc=fc_info)
 
 
 @fitness_center_bp.get('/<int:fc_id>/bonuses')
@@ -93,13 +92,14 @@ def add_fitness_center_service(fc_id):
 @check_user_login
 def get_fitness_center_service_info(fc_id, serv_id):
     fc_service = handlers.get_fitness_center_service_from_db(fc_id, serv_id)
-    if fc_service is not None:
-        fc_service_str = Converter.convert_to_string(fc_service)
-        user = session.get('user')
-        user_name = user['client_name']
-        return jsonify({'message': f"{user_name} fitness center {fc_id} service {serv_id}: {fc_service_str}"}), 200
-    else:
+    if fc_service is None:
         return jsonify({'message': 'Fitness center service not found'}), 404
+    # fc_service_str = Converter.convert_to_string(fc_service)
+    # user = session.get('user')
+    # user_name = user['client_name']
+    # return jsonify({'message': f"{user_name} fitness center {fc_id} service {serv_id}: {fc_service_str}"}), 200
+    return render_template('service_info.html', service=fc_service)
+
 
 
 @fitness_center_bp.put('/<int:fc_id>/services/<int:serv_id>')
@@ -141,14 +141,14 @@ def add_fitness_center_trainer():
 @check_user_login
 def get_fitness_center_trainer_info(fc_id, trainer_id):
     fc_trainer = handlers.get_fitness_center_trainer_from_db(fc_id, trainer_id)
-    if fc_trainer is not None:
-        fc_trainer_str = Converter.convert_to_string(fc_trainer)
-        user = session.get('user')
-        user_name = user['client_name']
-        return jsonify({'message': f"{user_name} fitness center {fc_id} trainer {trainer_id}:"
-                                   f" {fc_trainer_str}"}), 200
-    else:
+    if fc_trainer is None:
         return jsonify({'message': 'Fitness center trainer not found'}), 404
+    # fc_trainer_str = Converter.convert_to_string(fc_trainer)
+    # user = session.get('user')
+    # user_name = user['client_name']
+    # return jsonify({'message': f"{user_name} fitness center {fc_id} trainer {trainer_id}:"
+    #                            f" {fc_trainer_str}"}), 200
+    return render_template('trainer_info.html', trainer=fc_trainer)
 
 
 @fitness_center_bp.put('/<int:fc_id>/trainers/<int:trainer_id>')
@@ -216,15 +216,16 @@ def modify_fitness_center_trainer_schedule_in_db(fc_id, trainer_id):
 @check_user_login
 def get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id):
     fc_trainer_schedule = handlers.get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id)
-    if fc_trainer_schedule is not None:
-        fc_trainer_schedule_str = Converter.convert_to_string(fc_trainer_schedule)
-        user = session.get('user')
-        user_name = user['client_name']
-        return jsonify({'message': f"{user_name} fitness center {fc_id} trainer {trainer_id}:"
-                                   f" schedule {fc_trainer_schedule_str}"}), 200
-    else:
+    if fc_trainer_schedule is None:
         return jsonify({'message': 'Fitness center trainer schedule not found'}), 404
-
+    schedule = [dict(row) for row in fc_trainer_schedule]
+    # fc_trainer_schedule_str = Converter.convert_to_string(fc_trainer_schedule)
+    # user = session.get('user')
+    # user_name = user['client_name']
+    # return jsonify({'message': f"{user_name} fitness center {fc_id} trainer {trainer_id}:"
+    #                           f" schedule {fc_trainer_schedule_str}"}), 200
+    return render_template('trainer_schedule_info.html', schedule=schedule,
+                           fc_id=fc_id, trainer_id=trainer_id)
 
 @fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/schedule')
 @check_user_login
@@ -258,14 +259,14 @@ def add_trainer_to_fitness_center_service(fc_id, serv_id):
 @check_user_login
 def get_fitness_center_service_trainer_pair_info(fc_id, serv_id, trainer_id):
     fc_serv_trainer = handlers.get_fitness_center_service_trainer_from_db(fc_id, serv_id, trainer_id)
-    if fc_serv_trainer is not None:
-        fc_serv_trainer_str = Converter.convert_to_string(fc_serv_trainer)
-        user = session.get('user')
-        user_name = user['client_name']
-        return jsonify({'message': f"{user_name} fitness center {fc_id} service {serv_id}:"
-                                   f" trainer {fc_serv_trainer_str}"}), 200
-    else:
+    if fc_serv_trainer is None:
         return jsonify({'message': 'Fitness center & service trainer not found'}), 404
+    # fc_serv_trainer_str = Converter.convert_to_string(fc_serv_trainer)
+    # user = session.get('user')
+    # user_name = user['client_name']
+    # return jsonify({'message': f"{user_name} fitness center {fc_id} service {serv_id}:"
+    #                           f" trainer {fc_serv_trainer_str}"}), 200
+    return render_template('trainer_info.html', trainer=fc_serv_trainer)
 
 
 @fitness_center_bp.put('/<int:fc_id>/services/<int:serv_id>/trainer/<int:trainer_id>')

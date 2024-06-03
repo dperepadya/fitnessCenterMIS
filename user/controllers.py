@@ -59,10 +59,10 @@ def edit_user():
 @check_user_login
 def get_user_wallet_state():
     user = session.get('user')  # User is defined after Login
-    if user is None:
-        return jsonify({'message': 'Use is not logged in'}), 404
-    else:
-        return jsonify({'message': f"{user['client_name']} {user['funds']}"}), 200
+    user_id = user['client_id']
+    user_info = hndl.get_user_from_db(user_id)
+    return render_template('client_funds.html', user=user_info)
+    # return jsonify({'message': f"{user['client_name']} {user['funds']}"}), 200
 
 
 # Top up User balance

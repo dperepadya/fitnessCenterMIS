@@ -103,8 +103,8 @@ class QueryGenerator:
 
     @staticmethod
     def get_update_sql_query(table, params, where_conditions):
-        columns = ', '.join(params.keys())
-        values = [f"{QueryGenerator.format_value(value)}" for _, value in params.items()]
+        # columns = ', '.join(params.keys())
+        # values = [f"{QueryGenerator.format_value(value)}" for _, value in params.items()]
         set_query = []
         for i, join_table in enumerate(params):  # merged table
             param = list(params.keys())[i]

@@ -1,8 +1,10 @@
 class Service:
-    def __init__(self, service_id, name, description):
-        self.service_id = service_id
+    def __init__(self, name, description, duration, price, max_attendees):
         self.name = name
         self.description = description
+        self.duration = duration
+        self.price = price
+        self.max_attendees = max_attendees
 
     @classmethod
     def empty(cls):
