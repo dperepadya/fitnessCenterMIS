@@ -14,7 +14,10 @@ user_bp = Blueprint('user', __name__)
 @check_user_login
 def get_user():
     user = session.get('user')  # User is defined after Login
-    return jsonify({'message': f"User: {user['client_name']}"}), 200
+    user_id = user['client_id']
+    user_info = hndl.get_user_from_db(user_id)
+    return render_template('client_info.html', user=user_info)
+    # return jsonify({'message': f"User: {user['client_name']}"}), 200
 
 
 # A user can be added with /register POST command
