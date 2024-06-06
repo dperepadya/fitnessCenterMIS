@@ -32,6 +32,18 @@ def update_user_in_db(user):
     return result
 
 
+def update_user_funds_in_db(user_id, funds):
+    if funds == 0:
+        return True
+    # db command
+    query = qg.get_update_sql_query('clients',
+                                    {'funds': funds},
+                                    {"id": user_id})
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        result = db.save(query)
+    return result
+
 def get_user_cart_from_db(user):
     # db command
     cart = None

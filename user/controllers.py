@@ -19,8 +19,8 @@ def get_user():
     return render_template('client_info.html', user=user_info)
     # return jsonify({'message': f"User: {user['client_name']}"}), 200
 
-
 # A user can be added with /register POST command
+
 # @user_bp.get('/')
 # def new_user():
 #    return None
@@ -69,19 +69,34 @@ def get_user_wallet_state():
 
 
 # Top up User balance
-@user_bp.put('/funds')
+@user_bp.get('/funds/add')
+@check_user_login
+def add_user_funds():
+    user = session.get('user')  # User is defined after Login
+    user_id = user['client_id']
+    user_info = hndl.get_user_from_db(user_id)
+    if user_info is None:
+        return jsonify({'message': 'Cannot find user'}), 404
+    funds = user_info['funds']
+    return render_template('client_funds_add.html', user_id=user_id, funds=funds)
+    # return jsonify({'message': f"{user['client_name']} {user['funds']}"}), 200
+
+
+@user_bp.post('/funds/add')
 @check_user_login
 def update_user_wallet():
-    amount = request.json
-    user = session.get('user')  # User is defined after Login
-    if user and amount and amount > 0:
-        user.funds += amount
-        if hndl.update_user_in_db(user):
-            return jsonify({'message': 'User account was successfully funded'}), 200
-        return jsonify({'message': 'Cannot top up User account'}), 400
+    user_data = request.form
+    user_id = user_data['user_id']
+    funds = user_data['funds']
+    if funds is None:
+        return jsonify({'message': 'Funds value is required'}), 400
+    user_info = hndl.get_user_from_db(user_id)
+    current_funds = user_info['funds']
+    new_funds = current_funds + funds
+    if hndl.update_user_funds_in_db(user_id, funds):
+        return jsonify({'message': 'User funds updated successfully'}), 201
     else:
-        return jsonify({'message': 'Cannot top up User account'}), 400
-
+        return jsonify({'message': 'Cannot update user funds'}), 404
 
 # Get User cart information
 @user_bp.get('/cart')

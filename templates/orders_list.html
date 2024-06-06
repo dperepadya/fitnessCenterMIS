@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Trainers List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Service</th>
+                <th>Trainer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in trainers %}
+                <tr>
+                    <td>{{ row.service }}</td>
+                    <td>{{ row.trainer }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
