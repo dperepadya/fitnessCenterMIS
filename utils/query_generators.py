@@ -120,3 +120,10 @@ class QueryGenerator:
 
         return update_query
 
+    @staticmethod
+    def get_delete_sql_query(table, where_conditions):
+        if table is not None and where_conditions is not None:
+            where_query = QueryGenerator.get_sql_where_query(table, where_conditions)
+            delete_query = f"DELETE FROM {table} WHERE {where_query}"
+            return delete_query
+        return None

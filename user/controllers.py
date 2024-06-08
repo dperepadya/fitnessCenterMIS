@@ -71,7 +71,7 @@ def get_user_wallet_state():
 # Top up User balance
 @user_bp.get('/funds/add')
 @check_user_login
-def add_user_funds():
+def get_add_user_funds_form():
     user = session.get('user')  # User is defined after Login
     user_id = user['client_id']
     user_info = hndl.get_user_from_db(user_id)
@@ -84,17 +84,21 @@ def add_user_funds():
 
 @user_bp.post('/funds/add')
 @check_user_login
-def update_user_wallet():
+def add_user_funds():
     user_data = request.form
     user_id = user_data['user_id']
-    funds = user_data['funds']
-    if funds is None:
+    amount = user_data['amount']
+    if amount is None:
         return jsonify({'message': 'Funds value is required'}), 400
+    try:
+        amount = float(amount)
+    except ValueError:
+        return jsonify({'message': 'Amount must be number'}), 400
     user_info = hndl.get_user_from_db(user_id)
     current_funds = user_info['funds']
-    new_funds = current_funds + funds
-    if hndl.update_user_funds_in_db(user_id, funds):
-        return jsonify({'message': 'User funds updated successfully'}), 201
+    new_funds = current_funds + amount
+    if hndl.update_user_funds_in_db(user_id, new_funds):
+        return jsonify({'message': f'User funds updated successfully. The balance {new_funds}'}), 201
     else:
         return jsonify({'message': 'Cannot update user funds'}), 404
 

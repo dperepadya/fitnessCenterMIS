@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from flask import Blueprint, jsonify, request, session, render_template
+from jupyter_server import services
+
 from fitness_center import handlers
 from models.fitness_center import FitnessCenter
 from models.review import Review
@@ -16,32 +18,78 @@ fitness_center_bp = Blueprint('fitness_center', __name__)
 @check_user_login
 def get_fitness_centers_list():
     fc_list = handlers.get_fitness_centers_from_db()
-    if fc_list is not None:
-        # print(type(fc_list))
-        fc_list_str = Converter.convert_to_string(fc_list)
-        user = session.get('user')
-        user_name = user['client_name']
-        # print(user_name, fc_list_str)
-        return jsonify({'message': f"{user_name} {fc_list_str}"}), 200
-    else:
+    if fc_list is None:
         return jsonify({'message': 'Fitness centers list is empty'}), 404
+    # print(type(fc_list))
+    # fc_list_str = Converter.convert_to_string(fc_list)
+    # user = session.get('user')
+    # user_name = user['client_name']
+    # print(user_name, fc_list_str)
+    # return jsonify({'message': f"{user_name} {fc_list_str}"}), 200
+    return render_template('fitness_centers_list.html', fitness_centers=fc_list)
 
 
-@fitness_center_bp.post('/')
+# Add fitness center ======================================
+@fitness_center_bp.get('/add')
+@check_user_login
+def get_add_fitness_center_form():
+    return render_template('fitness_center_add.html')
+
+
+@fitness_center_bp.post('/add')
 @check_user_login
 def add_fitness_center():
-    fc_data = request.json
-    fc = FitnessCenter.empty()
-    return handlers.add_fitness_center_to_db(fc)
+    fc_data = request.form
+    fc = FitnessCenter(fc_data['name'], fc_data['address'], fc_data['phone'], fc_data['email'])
+    if handlers.add_fitness_center_to_db(fc):
+        return jsonify({'message': 'New Fitness Center added successfully'}), 201
+    else:
+        return jsonify({'message': 'Cannot add a Fitness Center'}), 404
 
 
-@fitness_center_bp.put('/<int:fc_id>')
+# Edit fitness center ======================================
+@fitness_center_bp.get('/<int:fc_id>/edit')
 @check_user_login
-def edit_fitness_center():
-    fc_data = request.json
-    fc = FitnessCenter.empty()
-    return handlers.modify_fitness_center_in_db(fc)
+def get_edit_fitness_center_form(fc_id):
+    fc_info = handlers.get_fitness_center_from_db(fc_id)
+    if fc_info is None:
+        return jsonify({'message': 'Cannot find a fitness center'}), 404
+    return render_template('fitness_center_edit.html', fc_id=fc_id)
 
+
+@fitness_center_bp.post('/<int:fc_id>/edit')
+@check_user_login
+def edit_fitness_center(fc_id):
+    fc_data = request.form
+    fc = FitnessCenter(fc_data['name'], fc_data['address'], fc_data['phone'], fc_data['email'])
+    if handlers.modify_fitness_center_in_db(fc_data['fitness_center_id']):
+        return jsonify({'message': 'Fitness Center updated successfully'}), 201
+    else:
+        return jsonify({'message': 'Cannot update the Fitness Center'}), 404
+
+
+# Delete fitness center ======================================
+@fitness_center_bp.get('/delete')
+@check_user_login
+def get_delete_fitness_center_form():
+    fc_list = handlers.get_fitness_centers_from_db()
+    if fc_list is None:
+        return jsonify({'message': 'Fitness centers list is empty'}), 404
+    return render_template('fitness_center_delete.html', fitness_centers=fc_list)
+
+
+@fitness_center_bp.post('/delete')
+@check_user_login
+def delete_fitness_center():
+    fc_data = request.form
+    fc_id = fc_data['fc_id']
+    if handlers.delete_fitness_center_from_db(fc_id):
+        return jsonify({'message': 'Fitness Center removed successfully'}), 201
+    else:
+        return jsonify({'message': 'Cannot delete the Fitness Center'}), 404
+
+
+# Get a fitness center info ======================================
 
 @fitness_center_bp.get('/<int:fc_id>')
 @check_user_login
@@ -56,6 +104,8 @@ def get_fitness_center_info(fc_id):
     # return jsonify({'message': f"Client: {user_name} Fitness center: id {fc_id} info: {fc_str}"}), 200
     return render_template('fitness_center_info.html', fc=fc_info)
 
+# ======================================
+
 
 @fitness_center_bp.get('/<int:fc_id>/bonuses')
 @check_user_login
@@ -66,26 +116,23 @@ def get_fitness_center_bonuses():
     else:
         return jsonify({'message': 'There is no info about bonuses'}), 404
 
+# Get Fitness Center Services ======================================
+
 
 @fitness_center_bp.get('/<int:fc_id>/services')
 @check_user_login
 def get_fitness_center_services(fc_id):
     fc_services = handlers.get_fitness_center_services_from_db(fc_id)
-    if fc_services is not None:
-        fc_services_str = Converter.convert_to_string(fc_services)
-        user = session.get('user')
-        user_name = user['client_name']
-        return jsonify({'message': f"{user_name} fitness center {fc_id} services: {fc_services_str}"}), 200
-    else:
+    if fc_services is None:
         return jsonify({'message': 'Fitness center services list is empty'}), 404
+    # fc_services_str = Converter.convert_to_string(fc_services)
+    # user = session.get('user')
+    # user_name = user['client_name']
+    # return jsonify({'message': f"{user_name} fitness center {fc_id} services: {fc_services_str}"}), 200
+    return render_template('services_list.html', services=fc_services, fc_id=fc_id)
 
 
-@fitness_center_bp.post('/<int:fc_id>/services')
-@check_user_login
-def add_fitness_center_service(fc_id):
-    serv_data = request.json
-    serv = Service.empty()
-    return handlers.add_fitness_center_service_to_db(serv)
+# Get Fitness Center Service info ======================================
 
 
 @fitness_center_bp.get('/<int:fc_id>/services/<int:serv_id>')
@@ -100,42 +147,97 @@ def get_fitness_center_service_info(fc_id, serv_id):
     # return jsonify({'message': f"{user_name} fitness center {fc_id} service {serv_id}: {fc_service_str}"}), 200
     return render_template('service_info.html', service=fc_service)
 
+# Add Fitness Center Services ======================================
 
 
-@fitness_center_bp.put('/<int:fc_id>/services/<int:serv_id>')
+@fitness_center_bp.get('/<int:fc_id>/services/add')
 @check_user_login
-def edit_fitness_center_service():
-    serv_data = request.json
-    serv = Service.empty()
-    return handlers.modify_fitness_center_service_in_db(serv)
+def get_add_fitness_center_service_form(fc_id):
+    return render_template('service_add.html', fc_id=fc_id)
 
 
-@fitness_center_bp.delete('/<int:fc_id>/services/<int:serv_id>')
+@fitness_center_bp.post('/<int:fc_id>/services/add')
 @check_user_login
-def delete_fitness_center_service(fc_id, serv_id):
-    return handlers.delete_fitness_center_service_from_db(fc_id, serv_id)
+def add_fitness_center_service(fc_id):
+    serv_data = request.form
+    serv = Service(serv_data['name'], serv_data['description'], serv_data['duration'], serv_data['price'],
+                   serv_data['max_attendees'])
+    serv.fitness_center_id = fc_id
+    if handlers.add_fitness_center_service_to_db(serv):
+        return jsonify({'message': 'Fitness Center Service added successfully'}), 201
+    else:
+        return jsonify({'message': 'Cannot add the Fitness Center Service'}), 404
+
+# Delete a Fitness Center Service ======================================
+
+
+@fitness_center_bp.get('/<int:fc_id>/services/delete')
+@check_user_login
+def get_delete_fitness_center_service_form(fc_id):
+    fc_services = handlers.get_fitness_center_services_from_db(fc_id)
+    if fc_services is None:
+        return jsonify({'message': 'Fitness center Services list is empty'}), 404
+    return render_template('service_delete.html', services=fc_services, fc_id=fc_id)
+
+
+@fitness_center_bp.post('/<int:fc_id>/services/delete')
+@check_user_login
+def delete_fitness_center_service(fc_id):
+    fc_services = request.form
+    serv_id = fc_services['service_id']
+    if handlers.delete_fitness_center_service_from_db(fc_id, serv_id):
+        return jsonify({'message': 'Fitness Center Service removed successfully'}), 201
+    else:
+        return jsonify({'message': 'Cannot remove the Fitness Center Service'}), 404
+
+# Get Fitness Center Trainers ======================================
 
 
 @fitness_center_bp.get('/<int:fc_id>/trainers')
 @check_user_login
 def get_fitness_center_trainers(fc_id):
     fc_trainers = handlers.get_fitness_center_trainers_from_db(fc_id)
-    if fc_trainers is not None:
-        fc_trainers_str = Converter.convert_to_string(fc_trainers)
-        user = session.get('user')
-        user_name = user['client_name']
-        return jsonify({'message': f"{user_name} fitness center {fc_id} trainers: {fc_trainers_str}"}), 200
-    else:
+    if fc_trainers is None:
         return jsonify({'message': 'Fitness center trainers list is empty'}), 404
+    # fc_trainers_str = Converter.convert_to_string(fc_trainers)
+    # user = session.get('user')
+    # user_name = user['client_name']
+    # return jsonify({'message': f"{user_name} fitness center {fc_id} trainers: {fc_trainers_str}"}), 200
+    return render_template('trainers_list.html', trainers=fc_trainers, fc_id=fc_id)
+
+# Get Fitness Center Service Trainers ======================================
 
 
-@fitness_center_bp.post('/<int:fc_id>/trainers')
+@fitness_center_bp.get('/<int:fc_id>/services/<int:serv_id>/trainers')
 @check_user_login
-def add_fitness_center_trainer():
-    trainer_data = request.json
+def get_fitness_center_trainers(fc_id, serv_id):
+    fc_trainers = handlers.get_fitness_center_services_and_trainers_from_db(fc_id, serv_id)
+    if fc_trainers is None:
+        return jsonify({'message': 'Fitness center trainers list is empty'}), 404
+    # fc_trainers_str = Converter.convert_to_string(fc_trainers)
+    # user = session.get('user')
+    # user_name = user['client_name']
+    # return jsonify({'message': f"{user_name} fitness center {fc_id} trainers: {fc_trainers_str}"}), 200
+    return render_template('service_trainers_list.html', trainers=fc_trainers, fc_id=fc_id,
+                           serv_id=serv_id)
+
+# Add Fitness Center Service Trainer ======================================
+
+
+@fitness_center_bp.post('/<int:fc_id>/services/<int:serv_id>/trainers/add')
+@check_user_login
+def get_add_fitness_center_service_trainer_form(fc_id, serv_id):
+    return render_template('trainer_add.html', fc_id=fc_id)
+
+
+@fitness_center_bp.post('/<int:fc_id>/services/<int:serv_id>/trainers/add')
+@check_user_login
+def add_fitness_center_service_trainer():
+    trainer_data = request.form
     trainer = Trainer.empty()
     return handlers.add_fitness_center_trainer_to_db(trainer)
 
+# Get Fitness Center Service Trainer ======================================
 
 @fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>')
 @check_user_login
@@ -169,14 +271,15 @@ def delete_fitness_center_trainer(fc_id, trainer_id):
 @check_user_login
 def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
     fc_trainer_reviews = handlers.get_fitness_center_trainer_rating_from_db(fc_id, trainer_id)
-    if fc_trainer_reviews is not None:
-        fc_trainer_reviews_str = Converter.convert_to_string(fc_trainer_reviews)
-        user = session.get('user')
-        user_name = user['client_name']
-        return jsonify({'message': f"{user_name} fitness center {fc_id} trainer {trainer_id}:"
-                                   f" reviews {fc_trainer_reviews_str}"}), 200
-    else:
+    if fc_trainer_reviews is None:
         return jsonify({'message': 'Fitness center trainer rating not found'}), 404
+    # fc_trainer_reviews_str = Converter.convert_to_string(fc_trainer_reviews)
+    # user = session.get('user')
+    # user_name = user['client_name']
+    # return jsonify({'message': f"{user_name} fitness center {fc_id} trainer {trainer_id}:"
+    #                            f" reviews {fc_trainer_reviews_str}"}), 200
+    return render_template('trainer_reviews.html', reviews=fc_trainer_reviews,
+                           fc_id=fc_id, trainer_id=trainer_id)
 
 
 @fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/rating/add')
@@ -227,6 +330,7 @@ def get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id):
     return render_template('trainer_schedule_info.html', schedule=schedule,
                            fc_id=fc_id, trainer_id=trainer_id)
 
+
 @fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/schedule')
 @check_user_login
 def add_fitness_center_trainer_schedule():
@@ -237,14 +341,15 @@ def add_fitness_center_trainer_schedule():
 @check_user_login
 def get_fitness_center_services_and_trainers(fc_id, serv_id):
     fc_serv_trainers = handlers.get_fitness_center_services_and_trainers_from_db(fc_id, serv_id)
-    if fc_serv_trainers is not None:
-        fc_serv_trainers_str = Converter.convert_to_string(fc_serv_trainers)
-        user = session.get('user')
-        user_name = user['client_name']
-        return jsonify({'message': f"{user_name} fitness center {fc_id} service {serv_id}:"
-                                   f" trainers {fc_serv_trainers_str}"}), 200
-    else:
+    if fc_serv_trainers is None:
         return jsonify({'message': 'Fitness center service-trainer pairs not found'}), 404
+        # fc_serv_trainers_str = Converter.convert_to_string(fc_serv_trainers)
+        # user = session.get('user')
+        # user_name = user['client_name']
+        # return jsonify({'message': f"{user_name} fitness center {fc_id} service {serv_id}:"
+        #                           f" trainers {fc_serv_trainers_str}"}), 200
+    return render_template('service_trainers_list.html', trainers=fc_serv_trainers,
+                           fc_id=fc_id, serv_id=serv_id)
 
 
 @fitness_center_bp.post('/<int:fc_id>/services/<int:serv_id>/trainers')
@@ -274,10 +379,10 @@ def get_fitness_center_service_trainer_pair_info(fc_id, serv_id, trainer_id):
 def edit_fitness_center_service_trainer(fc_id, serv_id, trainer_id):
     serv_data = request.json
     trainer = handlers.modify_fitness_center_service_trainer_in_db(fc_id, serv_id, trainer_id)
-    if trainer:
-        return jsonify(trainer)
-    else:
+    if trainer is None:
         return jsonify({'message': 'Fitness center & service trainer not found'}), 404
+    return jsonify(trainer)
+
 
 
 @fitness_center_bp.delete('/<int:fc_id>/services/<int:serv_id>/trainer/<int:trainer_id>')

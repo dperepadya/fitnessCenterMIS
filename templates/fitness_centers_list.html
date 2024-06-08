@@ -9,6 +9,7 @@
     <table>
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Address</th>
                 <th>Phone</th>
@@ -17,12 +18,13 @@
         </thead>
         <tbody>
             {% for row in fitness_centers %}
-                <tr>
-                    <td>{{ row.name }}</td>
-                    <td>{{ row.address }}</td>
-                    <td>{{ row.phone }}</td>
-                    <td>{{ row.email }}</td>
-                </tr>
+            <tr>
+                <td>{{ row.id }}</td>
+                <td>{{ row.name }}</td>
+                <td>{{ row.address }}</td>
+                <td>{{ row.phone }}</td>
+                <td>{{ row.email }}</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>

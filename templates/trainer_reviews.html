@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Trainers Reviews</h1>
+        <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Grade</th>
+                <th>Comment</th>
+                <th>Service</th>
+                <th>Client</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in reviews %}
+                <tr>
+                    <td>{{ row.date }}</td>
+                    <td>{{ row.grade }}</td>
+                    <td>{{ row.service }}</td>
+                    <td>{{ row.client_id }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
+</body>
+</html>

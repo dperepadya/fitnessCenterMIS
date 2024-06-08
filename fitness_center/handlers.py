@@ -6,16 +6,22 @@ def get_fitness_centers_from_db():
     # db command
     with SQLLiteDatabase('fitnessdb.db') as db:
         table = 'fitness_centers'
-        select_params = {'name': 'fc_name'}
+        select_params = None  # {'name': 'fc_name'}
         query = qg.get_select_sql_query(table, select_params)
         print(query)
         fc_list = db.fetch(query)
     return fc_list
 
 
-def add_fitness_centers_to_db():
-    # db command
-    return True
+def add_fitness_center_to_db(fc):
+    if fc is None:
+        return False
+    query = qg.get_insert_sql_query('fitness_centers', {'name': fc.name, 'address': fc.address,
+                                                        'phone': fc.phone, 'email': fc.email})
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        result = db.save(query)
+    return result
 
 
 def get_fitness_center_from_db(fc_id):
@@ -30,9 +36,23 @@ def get_fitness_center_from_db(fc_id):
     return fc
 
 
-def modify_fitness_center_in_db(fc_id):
-    # db command
-    return True
+def modify_fitness_center_in_db(fc):
+    query = qg.get_update_sql_query('fitness_centers', {'name': fc.name, 'address': fc.address,
+                                                        'phone': fc.phone, 'email': fc.email}, {"id": fc.id})
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        result = db.save(query)
+    return result
+
+
+def delete_fitness_center_from_db(fc_id):
+    table = 'fitness_centers'
+    where_params = {'id': fc_id}
+    query = qg.get_delete_sql_query(table, where_params)
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        result = db.save(query)
+    return result
 
 
 def get_fitness_center_bonuses_from_db():
@@ -42,7 +62,9 @@ def get_fitness_center_bonuses_from_db():
 def get_fitness_center_services_from_db(fc_id):
     # db command
     table = 'services'
-    select_params = {'services.name': 'service_name'}
+    select_params = {'services.id': 'id', 'services.name': 'name', 'services.duration': 'duration',
+                     'services.price': 'price', 'services.description': 'description',
+                     'services.max_attendees': 'max_attendees'}
     join_tables = ['fitness_centers']
     join_params = {'fitness_center_id': 'id'}
     where_cond = {'fitness_center_id': fc_id}
@@ -69,9 +91,17 @@ def get_fitness_center_service_from_db(fc_id, serv_id):
     return fc_service
 
 
-def add_fitness_center_service_to_db(serv):
-    # db command
-    return True
+def add_fitness_center_service_to_db(service):
+    if service is None:
+        return False
+    query = qg.get_insert_sql_query('services', {'name': service.name, 'duration': service.duration,
+                                                 'price': service.price, 'description': service.description,
+                                                 'max_attendees': service.max_attendees,
+                                                 'fitness_center_id': service.fitness_center_id})
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        result = db.save(query)
+    return result
 
 
 def modify_fitness_center_service_in_db(fc_id, serv_id):
@@ -80,14 +110,21 @@ def modify_fitness_center_service_in_db(fc_id, serv_id):
 
 
 def delete_fitness_center_service_from_db(fc_id, serv_id):
-    # db command
-    return True
+    table = 'services'
+    where_params = {'id': serv_id, 'fitness_center_id': fc_id}
+    query = qg.get_delete_sql_query(table, where_params)
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        result = db.save(query)
+    return result
 
 
 def get_fitness_center_trainers_from_db(fc_id):
     # db command
     table = 'trainers'
-    select_params = {'trainers.name': 'trainer_name'}
+    select_params = {'trainers.id': 'id', 'trainers.name': 'name', 'trainers.age': 'age', 'trainers.gender': 'gender',
+                     'trainers.capacity': 'capacity', 'trainers.fitness_center_id': 'fc_id',
+                     'trainers.service_id': 'service_id'}
     join_tables = ['fitness_centers']
     join_params = {'fitness_center_id': 'id'}
     where_cond = {'fitness_center_id': fc_id}
@@ -125,8 +162,13 @@ def modify_fitness_center_trainer_in_db(fc_id, trainer_id):
 
 
 def delete_fitness_center_trainer_from_db(fc_id, trainer_id):
-    # db command
-    return True
+    table = 'trainers'
+    where_params = {'id': trainer_id, 'fitness_center_id': fc_id}
+    query = qg.get_delete_sql_query(table, where_params)
+    print(query)
+    with SQLLiteDatabase('fitnessdb.db') as db:
+        result = db.save(query)
+    return result
 
 
 def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):

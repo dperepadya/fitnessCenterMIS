@@ -5,6 +5,7 @@ class Service:
         self.duration = duration
         self.price = price
         self.max_attendees = max_attendees
+        self.fitness_center_id = None
 
     @classmethod
     def empty(cls):
