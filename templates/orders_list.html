@@ -5,22 +5,28 @@
     <title>Title</title>
 </head>
 <body>
-    <h1>Trainers List</h1>
+    <h1>Reservations List</h1>
+    <p><strong>Client ID:</strong> {{ user_id }}</p>
     <table>
         <thead>
             <tr>
                 <th>Service</th>
                 <th>Trainer</th>
+                <th>Date</th>
+                <th>Time</th>
             </tr>
         </thead>
         <tbody>
-            {% for row in trainers %}
+            {% for row in orders %}
                 <tr>
-                    <td>{{ row.service }}</td>
-                    <td>{{ row.trainer }}</td>
+                    <td>{{ row.service_name }}</td>
+                    <td>{{ row.trainer_name }}</td>
+                    <td>{{ row.date }}</td>
+                    <td>{{ row.time }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+
 </body>
 </html>

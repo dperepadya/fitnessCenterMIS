@@ -3,20 +3,7 @@ class Trainer:
         self.name = name
         self.age = age
         self.gender = gender
-        #self.schedule = []
-        #self.rating = 0
-
-    def set_schedule(self, schedule):
-        self.schedule = schedule
-
-    def get_schedule(self):
-        return self.schedule
-
-    def set_rating(self, rating):
-        self.rating = rating
-
-    def get_rating(self):
-        return self.rating
+        self.fitness_center_id = None
 
     @classmethod
     def empty(cls):

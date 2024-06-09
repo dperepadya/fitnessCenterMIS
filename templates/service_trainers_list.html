@@ -6,13 +6,14 @@
 </head>
 <body>
     <h1>Trainers List</h1>
-        <table>
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    <p><strong>Service ID:</strong> {{ service_id }}</p>
+    <table>
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Age</th>
                 <th>Gender</th>
-                <th>Capacity</th>
             </tr>
         </thead>
         <tbody>
@@ -21,12 +22,10 @@
                     <td>{{ row.name }}</td>
                     <td>{{ row.age }}</td>
                     <td>{{ row.gender }}</td>
-                    <td>{{ row.capacity }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-     <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
-     <p><strong>Service ID:</strong> {{ service_id }}</p>
+
 </body>
 </html>

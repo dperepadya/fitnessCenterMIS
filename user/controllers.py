@@ -19,7 +19,7 @@ def get_user():
     return render_template('client_info.html', user=user_info)
     # return jsonify({'message': f"User: {user['client_name']}"}), 200
 
-# A user can be added with /register POST command
+# A user is being added with /register POST command
 
 # @user_bp.get('/')
 # def new_user():
@@ -102,7 +102,67 @@ def add_user_funds():
     else:
         return jsonify({'message': 'Cannot update user funds'}), 404
 
-# Get User cart information
+
+@user_bp.get('/orders')
+@check_user_login
+def get_user_orders():
+    user = session.get('user')  # User is defined after Login
+    user_id = user['client_id']
+    orders = hndl.get_user_orders_from_db(user_id)
+    if orders is None:
+        return jsonify({'message': 'User orders list is empty'}), 404
+    # orders_str = Converter.convert_to_string(orders)
+    # user_name = user['user_name']
+    # return jsonify({'message': f"{user_name} orders: {orders_str}"}), 200
+    return render_template('orders_list.html', user=user_id, orders=orders)
+
+
+@user_bp.get('/orders/<int:ord_id>')
+@check_user_login
+def get_user_order(ord_id):
+    user = session.get('user')
+    user_id = user['client_id']
+    order = hndl.get_user_order_from_db(user_id, ord_id)
+    if order is None:
+        return jsonify({'message': f'Connot find an order with Id {ord_id}'}), 404
+    # order_str = Converter.convert_to_string(order)
+    # user_name = user['user_name']
+    # return jsonify({'message': f"{user_name} order {ord_id}: {order_str}"}), 200
+    return render_template('order_info.html', user=user_id, order=order, ord_id=ord_id)
+
+
+@user_bp.post('/orders')
+@check_user_login
+def add_user_order(item_id):
+    user = session.get('user')  # User is defined after Login
+    return hndl.add_user_order_to_db(user)
+
+
+@user_bp.get('/orders/delete')
+@check_user_login
+def get_delete_user_order_form(ord_id):
+    user = session.get('user')  # User is defined after Login
+    user_id = user['client_id']
+    orders = hndl.get_user_orders_from_db(user_id)
+    if orders is None:
+        return jsonify({'message': 'User orders list is empty'}), 404
+    return render_template('order_delete.html', user=user_id, orders=orders)
+
+
+@user_bp.post('/orders/delete')
+@check_user_login
+def delete_user_order(ord_id):
+    orders_data = request.form
+    order_id = orders_data['order_id']
+    user = session.get('user')  # User is defined after Login
+    user_id = user['client_id']
+    if hndl.delete_user_order_from_db(ord_id):
+        return jsonify({'message': 'Order removed successfully'}), 201
+    else:
+        return jsonify({'message': 'Cannot delete the Order'}), 404
+
+
+# User cart ##################################
 @user_bp.get('/cart')
 @check_user_login
 def get_user_cart():
@@ -143,56 +203,6 @@ def edit_user_cart_item(item_id):
 def delete_user_cart_item(item_id):
     user = session.get('user')  # User is defined after Login
     return hndl.delete_user_cart_item_from_db(user, item_id)
-
-
-@user_bp.get('/order')
-@check_user_login
-def get_user_orders():
-    user = session.get('user')  # User is defined after Login
-    user_id = user['client_id']
-    orders = hndl.get_user_orders_from_db(user_id)
-    if orders is not None:
-        orders_str = Converter.convert_to_string(orders)
-        user_name = user['user_name']
-        return jsonify({'message': f"{user_name} orders: {orders_str}"}), 200
-    else:
-        return jsonify({'message': 'User orders list is empty'}), 404
-
-
-@user_bp.get('/order/<int:ord_id>')
-@check_user_login
-def get_user_order(ord_id):
-    user = session.get('user')
-    user_id = user['client_id']
-    order = hndl.get_user_order_from_db(user_id, ord_id)
-    if order is not None:
-        order_str = Converter.convert_to_string(order)
-        user_name = user['user_name']
-        return jsonify({'message': f"{user_name} order {ord_id}: {order_str}"}), 200
-    else:
-        return jsonify({'message': f'Connot find an order with Id {ord_id}'}), 404
-
-
-@user_bp.post('/order')
-@check_user_login
-def add_user_order(item_id):
-    user = session.get('user')  # User is defined after Login
-    return hndl.add_user_order_to_db(user)
-
-
-@user_bp.put('/order')
-@check_user_login
-def edit_user_order(item_id):
-    user = session.get('user')  # User is defined after Login
-    return hndl.edit_user_order_in_db(user)
-
-
-@user_bp.delete('/order/<int:ord_id>')
-@check_user_login
-def delete_user_order(ord_id):
-    user = session.get('user')  # User is defined after Login
-    return hndl.delete_user_order_from_db(user, ord_id)
-
 
 
 

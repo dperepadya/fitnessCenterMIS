@@ -5,6 +5,33 @@
     <title>Title</title>
 </head>
 <body>
-
+    <h1>Reservations List</h1>
+    <p><strong>Client ID:</strong> {{ user_id }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Service</th>
+                <th>Trainer</th>
+                <th>Date</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in orders %}
+                <tr>
+                    <td>{{ row.service }}</td>
+                    <td>{{ row.trainer }}</td>
+                    <td>{{ row.date }}</td>
+                    <td>{{ row.time }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>Delete an Reservation</h2>
+    <form action="/user/orders/delete" method="post">
+        <label for="order_id">Enter the ID of the Reservation to be deleted:</label>
+        <input type="number" id="order_id" name="order_id" required>
+        <input type="submit" value="Delete">
+    </form>
 </body>
 </html>
