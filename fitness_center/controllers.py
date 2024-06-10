@@ -6,6 +6,7 @@ from jupyter_server import services
 from fitness_center import handlers
 from models.fitness_center import FitnessCenter
 from models.review import Review
+from models.schedule import Schedule
 from models.service import Service
 from models.trainer import Trainer
 from utils.converters import Converter
@@ -362,20 +363,59 @@ def get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id):
     fc_trainer_schedule = handlers.get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id)
     if fc_trainer_schedule is None:
         return jsonify({'message': 'Fitness center trainer schedule not found'}), 404
-    schedule = [dict(row) for row in fc_trainer_schedule]
+    # schedule = [dict(row) for row in fc_trainer_schedule]
     # fc_trainer_schedule_str = Converter.convert_to_string(fc_trainer_schedule)
     # user = session.get('user')
     # user_name = user['client_name']
     # return jsonify({'message': f"{user_name} fitness center {fc_id} trainer {trainer_id}:"
     #                           f" schedule {fc_trainer_schedule_str}"}), 200
-    return render_template('trainer_schedule_info.html', schedule=schedule,
+    return render_template('trainer_schedule_info.html', schedule=fc_trainer_schedule,
                            fc_id=fc_id, trainer_id=trainer_id)
 
 
 @fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/schedule/add')
 @check_user_login
-def add_fitness_center_trainer_schedule():
-    return True
+def get_add_fitness_center_trainer_schedule_form(fc_id, trainer_id):
+    return render_template('schedule_add.html', fc_id=fc_id, trainer_id=trainer_id)
+
+
+@fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/schedule/add')
+@check_user_login
+def add_fitness_center_trainer_schedule(fc_id, trainer_id):
+    schedule_data = request.form
+    date = schedule_data['date']
+    start_time = schedule_data['start_time']
+    end_time = schedule_data['end_time']
+    schedule = Schedule(date, start_time, end_time, trainer_id)
+    result = handlers.add_fitness_center_trainer_schedule(schedule)
+    if result is not None:
+        return jsonify({'message': f"Schedule for trainer {trainer_id}"
+                                   f" added successfully"}), 201
+    else:
+        return jsonify({'message': f"Cannot add trainer  {trainer_id} schedule"}), 400
+
+
+@fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/schedule/delete')
+@check_user_login
+def get_delete_fitness_center_trainer_schedule_form(fc_id, trainer_id):
+    fc_trainer_schedule = handlers.get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id)
+    if fc_trainer_schedule is None:
+        return jsonify({'message': 'Fitness center Trainers list is empty'}), 404
+    return render_template('schedule_delete.html', schedule=fc_trainer_schedule, fc_id=fc_id,
+                           trainer_id=trainer_id)
+
+
+@fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/schedule/delete')
+@check_user_login
+def delete_fitness_center_trainer_schedule(fc_id, trainer_id):
+    fc_trainer_schedule = request.form
+    trainer_id = fc_trainer_schedule['trainer_id']
+    schedule_id = fc_trainer_schedule['schedule_id']
+    if handlers.delete_fitness_center_trainer_schedule_from_db(trainer_id, schedule_id):
+        return jsonify({'message': 'Fitness Center Trainer Schedule removed successfully'}), 201
+    else:
+        return jsonify({'message': 'Cannot remove the Fitness Center Trainer Schedule'}), 404
+
 
 
 # ======================================

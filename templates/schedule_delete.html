@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for row in schedules %}
+            {% for row in schedule %}
                 <tr>
                     <td>{{ row.date }}</td>
                     <td>{{ row.start_time }}</td>
@@ -26,5 +26,11 @@
             {% endfor %}
         </tbody>
     </table>
+    <h2>Delete an Reservation</h2>
+    <form action="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule/delete" method="post">
+        <label for="schedule_id">Enter the ID of the Reservation to be deleted:</label>
+        <input type="number" id="schedule_id" name="schedule_id" required>
+        <input type="submit" value="Delete">
+    </form>
 </body>
 </html>
