@@ -1,6 +1,8 @@
 from datetime import datetime
 
 from flask import Blueprint, jsonify, request, session, render_template
+
+from models.order import Order
 from user import handlers as hndl
 from models.user import User
 from utils.converters import Converter
@@ -131,13 +133,6 @@ def get_user_order(ord_id):
     return render_template('order_info.html', user=user_id, order=order, ord_id=ord_id)
 
 
-@user_bp.post('/orders')
-@check_user_login
-def add_user_order(item_id):
-    user = session.get('user')  # User is defined after Login
-    return hndl.add_user_order_to_db(user)
-
-
 @user_bp.get('/orders/delete')
 @check_user_login
 def get_delete_user_order_form(ord_id):
@@ -154,12 +149,76 @@ def get_delete_user_order_form(ord_id):
 def delete_user_order(ord_id):
     orders_data = request.form
     order_id = orders_data['order_id']
-    user = session.get('user')  # User is defined after Login
-    user_id = user['client_id']
-    if hndl.delete_user_order_from_db(ord_id):
+    # user = session.get('user')  # User is defined after Login
+    # user_id = user['client_id']
+    if hndl.delete_user_order_from_db(order_id):
         return jsonify({'message': 'Order removed successfully'}), 201
     else:
         return jsonify({'message': 'Cannot delete the Order'}), 404
+
+# Reservations handling ################################
+# Main endpoint
+
+
+@user_bp.get('/orders/add')
+@check_user_login
+def select_trainer_service_form():
+    trainer_services = hndl.get_trainer_services_list()
+    if trainer_services is None:
+        return jsonify({'message': f'Cannot get trainers & services info'}), 404
+    return render_template('trainer_service_select.html', trainer_services=trainer_services)
+
+# 2nd endpoint: Select a date of desired reservation
+# It's being called from "Trainer & Service" from
+# Outputs: trainer_service id
+
+
+@user_bp.get('/select_date')
+def select_date():
+    trainer_service_id = request.args.get('trainer_service_id')
+    return render_template('select_date.html', trainer_service_id=trainer_service_id)
+
+# 3d endpoint: Select a time slot (start time) of desired reservation
+# It's being called from "Select Date" form
+# Outputs: date, trainer_service_id
+
+
+@user_bp.get('/select_time')
+def select_time():
+    user = session.get('user')  # User is defined after Login
+    user_id = user['client_id']
+    trainer_service_id = request.args.get('trainer_service_id')
+    trainer_service_id = int(trainer_service_id)
+    date = request.args.get('date')
+    if date is not None:
+        date = datetime.strptime(date, '%Y-%m-%d').strftime('%d.%m.%Y')
+    available_time_slots = hndl.get_available_time_slots(user_id, trainer_service_id, date)
+    if available_time_slots is None:
+        return jsonify({'message': 'Cannot find available time slots'}), 201
+    return render_template('select_time.html', trainer_service_id=trainer_service_id, date=date,
+                           available_time_slots=available_time_slots)
+
+
+# It's being called from "Select Time" form
+# Inputs: trainer_service_id, date, available time slots
+
+@user_bp.post('/orders/add')
+def add_order():
+    user_id = session['user']['client_id']
+    trainer_service_id = request.form['trainer_service_id']
+    date = request.form['date']
+    time = request.form['time']
+    trainer_service = hndl.get_trainer_service(trainer_service_id)
+    if trainer_service is None:
+        return None
+    trainer_id = trainer_service['trainer_id']
+    service_id = trainer_service['service_id']
+
+    order = Order(date, time, user_id, trainer_id, service_id)
+    if hndl.add_user_order_to_db(order):
+        return jsonify({'message': 'Order added successfully'}), 201
+    else:
+        return jsonify({'message': 'Failed to add order'}), 500
 
 
 # User cart ##################################
@@ -203,8 +262,5 @@ def edit_user_cart_item(item_id):
 def delete_user_cart_item(item_id):
     user = session.get('user')  # User is defined after Login
     return hndl.delete_user_cart_item_from_db(user, item_id)
-
-
-
 
 
