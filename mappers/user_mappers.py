@@ -1,8 +1,8 @@
-from db_models.user import Client
+from db_models.client import Client
 from models.user import User
 
 
-def client_to_user(client):
+def userdb_to_user(client):
     return User(
         name=client.name,
         date_of_birth=client.date_of_birth,
@@ -12,7 +12,16 @@ def client_to_user(client):
     )
 
 
-def user_to_client(user):
+def userdb_to_userdict(user):
+    return {
+        'client_id': user.id,
+        'client_name': user.name,
+        'funds': user.funds,
+        'fitness_center_id': user.fitness_center_id
+    }
+
+
+def user_to_userdb(user):
     client = Client(
         name=user.name,
         date_of_birth=user.date_of_birth,

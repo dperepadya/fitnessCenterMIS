@@ -10,4 +10,8 @@ Base = declarative_base()
 
 
 def get_db():
-    return Session()
+    db = Session()
+    try:
+        yield db
+    finally:
+        db.close()

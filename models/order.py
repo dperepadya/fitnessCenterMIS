@@ -1,6 +1,3 @@
-import uuid
-from datetime import datetime
-
 
 class Order:
     def __init__(self, date, time, client_id, trainer_id, service_id):

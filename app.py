@@ -25,7 +25,7 @@ def before_request():
 def teardown_request(exception=None):
     db = getattr(g, 'db', None)
     if db is not None:
-        db.remove()
+        db.close()
 
 
 app.register_blueprint(register_bp, url_prefix='/register')

@@ -92,14 +92,7 @@ def get_trainer_service(trainer_service_id):
         return None
 
 
-def get_available_time_slots(client_id, trainer_service_id, date):
-    trainer_service = get_trainer_service(trainer_service_id)
-    if trainer_service is None:
-        return None
-    trainer_id = trainer_service['trainer_id']
-    service_id = trainer_service['service_id']
-    capacity = trainer_service['capacity']
-    # Get trainer schedule
+def get_trainer_cshedule(trainer_id, date):
     table = 'schedules'
     params = None
     where_conditions = {'trainer_id': trainer_id, 'date': date}
@@ -109,9 +102,10 @@ def get_available_time_slots(client_id, trainer_service_id, date):
         schedule = db.fetch(query, False)
     if schedule is None:
         return None
-    date_start_time = datetime.strptime(schedule['start_time'], '%H:%M')
-    date_end_time = datetime.strptime(schedule['end_time'], '%H:%M')
-    # Get reserved slots on the date
+    return schedule
+
+
+def get_orders_from_db(client_id, service_id, trainer_id, date):
     table = 'orders'
     params = None
     where_conditions = {'client_id': client_id, 'service_id': service_id, 'trainer_id': trainer_id, 'date': date}
@@ -119,7 +113,28 @@ def get_available_time_slots(client_id, trainer_service_id, date):
     print(query)
     with SQLLiteDatabase('fitnessdb.db') as db:
         orders = db.fetch(query)
+    if orders is None:
+        return None
+    return orders
 
+
+def get_available_time_slots(client_id, trainer_service_id, date):
+    trainer_service = get_trainer_service(trainer_service_id)
+    if trainer_service is None:
+        return None
+    trainer_id = trainer_service['trainer_id']
+    service_id = trainer_service['service_id']
+    capacity = trainer_service['capacity']
+    # Get trainer schedule
+    schedule = get_trainer_cshedule(trainer_id, date)
+    if schedule is None:
+        return None
+    date_start_time = datetime.strptime(schedule['start_time'], '%H:%M')
+    date_end_time = datetime.strptime(schedule['end_time'], '%H:%M')
+    # Get booked slots on the date
+    orders = get_orders_from_db(client_id, service_id, trainer_id, date)
+    if orders is None:
+        return None
     booked_slots = [datetime.strptime(order['time'], '%H:%M') for order in orders]
 
     slots = []

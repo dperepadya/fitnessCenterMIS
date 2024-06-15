@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, render_template
-from register import handlers as hndl
+from register import orm_handlers as hndl
 from models.user import User
 
 register_bp = Blueprint('register', __name__)
@@ -18,7 +18,7 @@ def add_user():
     user = User(user_data['name'], user_data['date_of_birth'], user_data['address'], user_data['phone'],
                 user_data['email'])
     result = hndl.insert_user_to_db(user)
-    if result is not None:
+    if result:
         return jsonify({'message': f"New user {user.name}: created successfully"}), 201
     else:
         return jsonify({'message': 'Cannot create new user '}), 400

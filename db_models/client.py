@@ -15,3 +15,5 @@ class Client(Base):
     funds = Column(Integer)
     fitness_center_id = Column(Integer)
     credentials = relationship("Credential", back_populates="client")
+    orders = relationship("Order", back_populates="client")
+

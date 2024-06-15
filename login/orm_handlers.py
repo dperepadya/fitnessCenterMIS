@@ -2,8 +2,8 @@ from flask import g
 
 from database.sqlalchemy_utils import Session
 from db_models.credentials import Credential
-from db_models.user import Client
-from mappers.user_mapper import client_to_user
+from db_models.client import Client
+from mappers.user_mappers import userdb_to_userdict
 
 
 def authenticate(username, password):
@@ -11,7 +11,7 @@ def authenticate(username, password):
         user = get_user_from_db(username, password)
         # print(user['client_name'])
         if user:
-            return client_to_user(user)
+            return userdb_to_userdict(user)
         return user
     else:
         return None

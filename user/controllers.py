@@ -16,7 +16,7 @@ user_bp = Blueprint('user', __name__)
 @check_user_login
 def get_user():
     user = session.get('user')  # User is defined after Login
-    user_id = user['client_id']
+    user_id = user['id']
     user_info = hndl.get_user_from_db(user_id)
     return render_template('client_info.html', user=user_info)
     # return jsonify({'message': f"User: {user['client_name']}"}), 200
@@ -33,7 +33,7 @@ def get_user():
 @check_user_login
 def get_user_edit_form():
     user = session.get('user')  # User is defined after Login
-    user_id = user['client_id']
+    user_id = user['id']
     user_info = hndl.get_user_from_db(user_id)
     if user_info is None:
         return jsonify({'message': 'Cannot find user'}), 404
@@ -64,7 +64,7 @@ def edit_user():
 @check_user_login
 def get_user_wallet_state():
     user = session.get('user')  # User is defined after Login
-    user_id = user['client_id']
+    user_id = user['id']
     user_info = hndl.get_user_from_db(user_id)
     return render_template('client_funds.html', user=user_info)
     # return jsonify({'message': f"{user['client_name']} {user['funds']}"}), 200
@@ -75,7 +75,7 @@ def get_user_wallet_state():
 @check_user_login
 def get_add_user_funds_form():
     user = session.get('user')  # User is defined after Login
-    user_id = user['client_id']
+    user_id = user['id']
     user_info = hndl.get_user_from_db(user_id)
     if user_info is None:
         return jsonify({'message': 'Cannot find user'}), 404
@@ -109,7 +109,7 @@ def add_user_funds():
 @check_user_login
 def get_user_orders():
     user = session.get('user')  # User is defined after Login
-    user_id = user['client_id']
+    user_id = user['id']
     orders = hndl.get_user_orders_from_db(user_id)
     if orders is None:
         return jsonify({'message': 'User orders list is empty'}), 404
@@ -123,7 +123,7 @@ def get_user_orders():
 @check_user_login
 def get_user_order(ord_id):
     user = session.get('user')
-    user_id = user['client_id']
+    user_id = user['id']
     order = hndl.get_user_order_from_db(user_id, ord_id)
     if order is None:
         return jsonify({'message': f'Connot find an order with Id {ord_id}'}), 404
@@ -137,7 +137,7 @@ def get_user_order(ord_id):
 @check_user_login
 def get_delete_user_order_form(ord_id):
     user = session.get('user')  # User is defined after Login
-    user_id = user['client_id']
+    user_id = user['id']
     orders = hndl.get_user_orders_from_db(user_id)
     if orders is None:
         return jsonify({'message': 'User orders list is empty'}), 404
@@ -150,7 +150,7 @@ def delete_user_order(ord_id):
     orders_data = request.form
     order_id = orders_data['order_id']
     # user = session.get('user')  # User is defined after Login
-    # user_id = user['client_id']
+    # user_id = user['id']
     if hndl.delete_user_order_from_db(order_id):
         return jsonify({'message': 'Order removed successfully'}), 201
     else:
@@ -186,7 +186,7 @@ def select_date():
 @user_bp.get('/select_time')
 def select_time():
     user = session.get('user')  # User is defined after Login
-    user_id = user['client_id']
+    user_id = user['id']
     trainer_service_id = request.args.get('trainer_service_id')
     trainer_service_id = int(trainer_service_id)
     date = request.args.get('date')
