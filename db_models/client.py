@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from database.sqlalchemy_utils import Base
@@ -13,7 +13,8 @@ class Client(Base):
     phone = Column(String)
     email = Column(String)
     funds = Column(Integer)
-    fitness_center_id = Column(Integer)
+    fitness_center_id = Column(Integer, ForeignKey('fitness_centers.id'))
+
     credentials = relationship("Credential", back_populates="client")
     orders = relationship("Order", back_populates="client")
 

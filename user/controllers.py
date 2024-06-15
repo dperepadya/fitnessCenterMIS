@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import Blueprint, jsonify, request, session, render_template
 
 from models.order import Order
-from user import handlers as hndl
+from user import orm_handlers as hndl
 from models.user import User
 from utils.converters import Converter
 from utils.login_decorator import check_user_login

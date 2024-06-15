@@ -1,9 +1,8 @@
 from datetime import datetime
 
 from flask import Blueprint, jsonify, request, session, render_template
-from jupyter_server import services
 
-from fitness_center import handlers
+from fitness_center import orm_handlers as hndl
 from models.fitness_center import FitnessCenter
 from models.review import Review
 from models.schedule import Schedule
@@ -18,7 +17,7 @@ fitness_center_bp = Blueprint('fitness_center', __name__)
 @fitness_center_bp.get('/')
 @check_user_login
 def get_fitness_centers_list():
-    fc_list = handlers.get_fitness_centers_from_db()
+    fc_list = hndl.get_fitness_centers_from_db()
     if fc_list is None:
         return jsonify({'message': 'Fitness centers list is empty'}), 404
     # print(type(fc_list))
@@ -42,7 +41,7 @@ def get_add_fitness_center_form():
 def add_fitness_center():
     fc_data = request.form
     fc = FitnessCenter(fc_data['name'], fc_data['address'], fc_data['phone'], fc_data['email'])
-    if handlers.add_fitness_center_to_db(fc):
+    if hndl.add_fitness_center_to_db(fc):
         return jsonify({'message': 'New Fitness Center added successfully'}), 201
     else:
         return jsonify({'message': 'Cannot add a Fitness Center'}), 404
@@ -52,7 +51,7 @@ def add_fitness_center():
 @fitness_center_bp.get('/<int:fc_id>/edit')
 @check_user_login
 def get_edit_fitness_center_form(fc_id):
-    fc_info = handlers.get_fitness_center_from_db(fc_id)
+    fc_info = hndl.get_fitness_center_from_db(fc_id)
     if fc_info is None:
         return jsonify({'message': 'Cannot find a fitness center'}), 404
     return render_template('fitness_center_edit.html', fc_id=fc_id)
@@ -63,7 +62,7 @@ def get_edit_fitness_center_form(fc_id):
 def edit_fitness_center(fc_id):
     fc_data = request.form
     fc = FitnessCenter(fc_data['name'], fc_data['address'], fc_data['phone'], fc_data['email'])
-    if handlers.modify_fitness_center_in_db(fc):
+    if hndl.modify_fitness_center_in_db(fc):
         return jsonify({'message': 'Fitness Center updated successfully'}), 201
     else:
         return jsonify({'message': 'Cannot update the Fitness Center'}), 404
@@ -73,7 +72,7 @@ def edit_fitness_center(fc_id):
 @fitness_center_bp.get('/delete')
 @check_user_login
 def get_delete_fitness_center_form():
-    fc_list = handlers.get_fitness_centers_from_db()
+    fc_list = hndl.get_fitness_centers_from_db()
     if fc_list is None:
         return jsonify({'message': 'Fitness centers list is empty'}), 404
     return render_template('fitness_center_delete.html', fitness_centers=fc_list)
@@ -84,7 +83,7 @@ def get_delete_fitness_center_form():
 def delete_fitness_center():
     fc_data = request.form
     fc_id = fc_data['fc_id']
-    if handlers.delete_fitness_center_from_db(fc_id):
+    if hndl.delete_fitness_center_from_db(fc_id):
         return jsonify({'message': 'Fitness Center removed successfully'}), 201
     else:
         return jsonify({'message': 'Cannot delete the Fitness Center'}), 404
@@ -95,7 +94,7 @@ def delete_fitness_center():
 @fitness_center_bp.get('/<int:fc_id>')
 @check_user_login
 def get_fitness_center_info(fc_id):
-    fc_info = handlers.get_fitness_center_from_db(fc_id)
+    fc_info = hndl.get_fitness_center_from_db(fc_id)
     if fc_info is None:
         return jsonify({'message': 'Cannot find a fitness centers'}), 404
     # fc_str = Converter.convert_to_string(fc)
@@ -112,7 +111,7 @@ def get_fitness_center_info(fc_id):
 @fitness_center_bp.get('/<int:fc_id>/services')
 @check_user_login
 def get_fitness_center_services(fc_id):
-    fc_services = handlers.get_fitness_center_services_from_db(fc_id)
+    fc_services = hndl.get_fitness_center_services_from_db(fc_id)
     if fc_services is None:
         return jsonify({'message': 'Fitness center services list is empty'}), 404
     # fc_services_str = Converter.convert_to_string(fc_services)
@@ -128,7 +127,7 @@ def get_fitness_center_services(fc_id):
 @fitness_center_bp.get('/<int:fc_id>/services/<int:serv_id>')
 @check_user_login
 def get_fitness_center_service_info(fc_id, serv_id):
-    fc_service = handlers.get_fitness_center_service_from_db(fc_id, serv_id)
+    fc_service = hndl.get_fitness_center_service_from_db(fc_id, serv_id)
     if fc_service is None:
         return jsonify({'message': 'Fitness center service not found'}), 404
     # fc_service_str = Converter.convert_to_string(fc_service)
@@ -153,7 +152,7 @@ def add_fitness_center_service(fc_id):
     serv = Service(serv_data['name'], serv_data['description'], serv_data['duration'], serv_data['price'],
                    serv_data['max_attendees'])
     serv.fitness_center_id = fc_id
-    if handlers.add_fitness_center_service_to_db(serv):
+    if hndl.add_fitness_center_service_to_db(serv):
         return jsonify({'message': 'Fitness Center Service added successfully'}), 201
     else:
         return jsonify({'message': 'Cannot add the Fitness Center Service'}), 404
@@ -164,7 +163,7 @@ def add_fitness_center_service(fc_id):
 @fitness_center_bp.get('/<int:fc_id>/services/delete')
 @check_user_login
 def get_delete_fitness_center_service_form(fc_id):
-    fc_services = handlers.get_fitness_center_services_from_db(fc_id)
+    fc_services = hndl.get_fitness_center_services_from_db(fc_id)
     if fc_services is None:
         return jsonify({'message': 'Fitness center Services list is empty'}), 404
     return render_template('service_delete.html', services=fc_services, fc_id=fc_id)
@@ -175,7 +174,7 @@ def get_delete_fitness_center_service_form(fc_id):
 def delete_fitness_center_service(fc_id):
     fc_services = request.form
     serv_id = fc_services['service_id']
-    if handlers.delete_fitness_center_service_from_db(fc_id, serv_id):
+    if hndl.delete_fitness_center_service_from_db(fc_id, serv_id):
         return jsonify({'message': 'Fitness Center Service removed successfully'}), 201
     else:
         return jsonify({'message': 'Cannot remove the Fitness Center Service'}), 404
@@ -186,7 +185,7 @@ def delete_fitness_center_service(fc_id):
 @fitness_center_bp.get('/<int:fc_id>/trainers')
 @check_user_login
 def get_fitness_center_trainers(fc_id):
-    fc_trainers = handlers.get_fitness_center_trainers_from_db(fc_id)
+    fc_trainers = hndl.get_fitness_center_trainers_from_db(fc_id)
     if fc_trainers is None:
         return jsonify({'message': 'Fitness center trainers list is empty'}), 404
     # fc_trainers_str = Converter.convert_to_string(fc_trainers)
@@ -201,7 +200,7 @@ def get_fitness_center_trainers(fc_id):
 @fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>')
 @check_user_login
 def get_fitness_center_trainer_info(fc_id, trainer_id):
-    fc_trainer = handlers.get_fitness_center_trainer_from_db(fc_id, trainer_id)
+    fc_trainer = hndl.get_fitness_center_trainer_from_db(fc_id, trainer_id)
     if fc_trainer is None:
         return jsonify({'message': 'Fitness center trainer not found'}), 404
     # fc_trainer_str = Converter.convert_to_string(fc_trainer)
@@ -227,7 +226,7 @@ def add_fitness_center_trainer(fc_id):
     trainer_data = request.form
     trainer = Trainer(trainer_data['name'], trainer_data['age'], trainer_data['gender'])
     trainer.fitness_center_id = fc_id
-    if handlers.add_fitness_center_trainer_to_db(trainer):
+    if hndl.add_fitness_center_trainer_to_db(trainer):
         return jsonify({'message': 'Fitness Center Trainer added successfully'}), 201
     else:
         return jsonify({'message': 'Cannot add the Fitness Center Trainer'}), 404
@@ -238,7 +237,7 @@ def add_fitness_center_trainer(fc_id):
 @fitness_center_bp.get('/<int:fc_id>/trainers/delete')
 @check_user_login
 def get_delete_fitness_center_trainer_form(fc_id):
-    fc_trainers = handlers.get_fitness_center_trainers_from_db(fc_id)
+    fc_trainers = hndl.get_fitness_center_trainers_from_db(fc_id)
     if fc_trainers is None:
         return jsonify({'message': 'Fitness center Trainers list is empty'}), 404
     return render_template('trainer_delete.html', trainers=fc_trainers, fc_id=fc_id)
@@ -249,7 +248,7 @@ def get_delete_fitness_center_trainer_form(fc_id):
 def delete_fitness_center_trainer(fc_id):
     fc_trainers = request.form
     trainer_id = fc_trainers['trainer_id']
-    if handlers.delete_fitness_center_trainer_from_db(fc_id, trainer_id):
+    if hndl.delete_fitness_center_trainer_from_db(fc_id, trainer_id):
         return jsonify({'message': 'Fitness Center Trainer removed successfully'}), 201
     else:
         return jsonify({'message': 'Cannot remove the Fitness Center Trainer'}), 404
@@ -261,7 +260,7 @@ def delete_fitness_center_trainer(fc_id):
 @fitness_center_bp.get('/<int:fc_id>/services/<int:serv_id>/trainers')
 @check_user_login
 def get_fitness_center_service_trainers(fc_id, serv_id):
-    fc_trainers = handlers.get_fitness_center_service_trainers_from_db(fc_id, serv_id)
+    fc_trainers = hndl.get_fitness_center_service_trainers_from_db(fc_id, serv_id)
     if fc_trainers is None:
         return jsonify({'message': 'Fitness center trainers list is empty'}), 404
     # fc_trainers_str = Converter.convert_to_string(fc_trainers)
@@ -278,7 +277,7 @@ def get_fitness_center_service_trainers(fc_id, serv_id):
 @fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/services')
 @check_user_login
 def get_fitness_center_trainer_services(fc_id, trainer_id):
-    fc_trainers = handlers.get_fitness_center_trainer_services_from_db(fc_id, trainer_id)
+    fc_trainers = hndl.get_fitness_center_trainer_services_from_db(fc_id, trainer_id)
     if fc_trainers is None:
         return jsonify({'message': 'Fitness center trainers list is empty'}), 404
     # fc_trainers_str = Converter.convert_to_string(fc_trainers)
@@ -303,7 +302,7 @@ def add_fitness_center_service_trainer(fc_id, trainer_id):
     service_data = request.form
     service_id = service_data['service_id']
     capacity = service_data['capacity']
-    if handlers.add_fitness_center_trainer_and_service_to_db(trainer_id, service_id, capacity):
+    if hndl.add_fitness_center_trainer_and_service_to_db(trainer_id, service_id, capacity):
         return jsonify({'message': 'Fitness Center Service assigned successfully'}), 201
     else:
         return jsonify({'message': 'Cannot assign the Service to the Trainer'}), 404
@@ -315,7 +314,7 @@ def add_fitness_center_service_trainer(fc_id, trainer_id):
 @fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/rating')
 @check_user_login
 def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
-    fc_trainer_reviews = handlers.get_fitness_center_trainer_rating_from_db(fc_id, trainer_id)
+    fc_trainer_reviews = hndl.get_fitness_center_trainer_rating_from_db(fc_id, trainer_id)
     if fc_trainer_reviews is None:
         return jsonify({'message': 'Fitness center trainer rating not found'}), 404
     # fc_trainer_reviews_str = Converter.convert_to_string(fc_trainer_reviews)
@@ -346,7 +345,7 @@ def add_fitness_center_trainer_rating(fc_id, trainer_id):
         date = datetime.strptime(date, '%Y-%m-%d').strftime('%d.%m.%Y')
     review = Review(review_data['date'], review_data['grade'], review_data['comment'],
                     user_id, trainer_id)
-    result = handlers.add_fitness_center_trainer_rating(review)
+    result = hndl.add_fitness_center_trainer_rating(review)
     if result is not None:
         return jsonify({'message': f"User {user_id} review for trainer {trainer_id}"
                                    f" created successfully"}), 201
@@ -360,7 +359,7 @@ def add_fitness_center_trainer_rating(fc_id, trainer_id):
 @fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/schedule')
 @check_user_login
 def get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id):
-    fc_trainer_schedule = handlers.get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id)
+    fc_trainer_schedule = hndl.get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id)
     if fc_trainer_schedule is None:
         return jsonify({'message': 'Fitness center trainer schedule not found'}), 404
     # schedule = [dict(row) for row in fc_trainer_schedule]
@@ -387,7 +386,7 @@ def add_fitness_center_trainer_schedule(fc_id, trainer_id):
     start_time = schedule_data['start_time']
     end_time = schedule_data['end_time']
     schedule = Schedule(date, start_time, end_time, trainer_id)
-    result = handlers.add_fitness_center_trainer_schedule(schedule)
+    result = hndl.add_fitness_center_trainer_schedule(schedule)
     if result is not None:
         return jsonify({'message': f"Schedule for trainer {trainer_id}"
                                    f" added successfully"}), 201
@@ -398,7 +397,7 @@ def add_fitness_center_trainer_schedule(fc_id, trainer_id):
 @fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/schedule/delete')
 @check_user_login
 def get_delete_fitness_center_trainer_schedule_form(fc_id, trainer_id):
-    fc_trainer_schedule = handlers.get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id)
+    fc_trainer_schedule = hndl.get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id)
     if fc_trainer_schedule is None:
         return jsonify({'message': 'Fitness center Trainers list is empty'}), 404
     return render_template('schedule_delete.html', schedule=fc_trainer_schedule, fc_id=fc_id,
@@ -411,7 +410,7 @@ def delete_fitness_center_trainer_schedule(fc_id, trainer_id):
     fc_trainer_schedule = request.form
     trainer_id = fc_trainer_schedule['trainer_id']
     schedule_id = fc_trainer_schedule['schedule_id']
-    if handlers.delete_fitness_center_trainer_schedule_from_db(trainer_id, schedule_id):
+    if hndl.delete_fitness_center_trainer_schedule_from_db(trainer_id, schedule_id):
         return jsonify({'message': 'Fitness Center Trainer Schedule removed successfully'}), 201
     else:
         return jsonify({'message': 'Cannot remove the Fitness Center Trainer Schedule'}), 404
@@ -424,7 +423,7 @@ def delete_fitness_center_trainer_schedule(fc_id, trainer_id):
 @fitness_center_bp.get('/<int:fc_id>/bonuses')
 @check_user_login
 def get_fitness_center_bonuses():
-    bonuses = handlers.get_fitness_center_bonuses_from_db()
+    bonuses = hndl.get_fitness_center_bonuses_from_db()
     if bonuses:
         return jsonify(bonuses)
     else:

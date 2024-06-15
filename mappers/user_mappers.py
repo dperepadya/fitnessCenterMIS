@@ -32,3 +32,16 @@ def user_to_userdb(user):
     )
     client.id = user.id
     return client
+
+
+def user_to_userdb(existing_user, user):
+    if existing_user is None or user is None:
+        return None
+    existing_user.name = user.name,
+    existing_user.date_of_birth = user.date_of_birth,
+    existing_user.address = user.address,
+    existing_user.phone = user.phone,
+    existing_user.email = user.email,
+    existing_user.funds = user.funds
+    existing_user.id = user.id
+    return existing_user

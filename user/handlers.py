@@ -92,7 +92,7 @@ def get_trainer_service(trainer_service_id):
         return None
 
 
-def get_trainer_cshedule(trainer_id, date):
+def get_trainer_schedule(trainer_id, date):
     table = 'schedules'
     params = None
     where_conditions = {'trainer_id': trainer_id, 'date': date}
@@ -126,7 +126,7 @@ def get_available_time_slots(client_id, trainer_service_id, date):
     service_id = trainer_service['service_id']
     capacity = trainer_service['capacity']
     # Get trainer schedule
-    schedule = get_trainer_cshedule(trainer_id, date)
+    schedule = get_trainer_schedule(trainer_id, date)
     if schedule is None:
         return None
     date_start_time = datetime.strptime(schedule['start_time'], '%H:%M')
