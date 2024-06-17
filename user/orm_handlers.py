@@ -58,7 +58,6 @@ def update_user_funds_in_db(user_id, funds):
 def add_user_order_to_db(order):
     if order is None:
         return False
-
     try:
         order = order_to_orderdb(order)
         g.db.add(order)

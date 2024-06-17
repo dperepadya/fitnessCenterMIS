@@ -343,7 +343,7 @@ def add_fitness_center_trainer_rating(fc_id, trainer_id):
     date = review_data['date']
     if date is not None:
         date = datetime.strptime(date, '%Y-%m-%d').strftime('%d.%m.%Y')
-    review = Review(review_data['date'], review_data['grade'], review_data['comment'],
+    review = Review(date, review_data['grade'], review_data['comment'],
                     user_id, trainer_id)
     result = hndl.add_fitness_center_trainer_rating(review)
     if result is not None:

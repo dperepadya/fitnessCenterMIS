@@ -1,9 +1,12 @@
 from flask import g
+from sqlalchemy.orm import joinedload
 
 from db_models.fitness_center import FitnessCenter
+from db_models.review import Review
 from db_models.service import Service
 from db_models.trainer import Trainer
 from mappers.fitness_center_mappers import fc_to_fcdb
+from mappers.review_mappers import review_to_reviewdb
 from mappers.service_mappers import service_to_servicedb
 
 
@@ -172,3 +175,36 @@ def delete_fitness_center_trainer_from_db(fc_id, trainer_id):
         g.db.rollback()
         print(f"Error deleting fitness center trainer: {e}")
         return False
+
+
+def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
+    try:
+        fc_trainer_rating = g.db.query(Review).options(
+            joinedload(Review.client_id),
+            joinedload(Review.trainer_id)
+        ).filter(
+            Trainer.fitness_center_id == fc_id,
+            Trainer.id == trainer_id
+        ).all()
+        return fc_trainer_rating
+    except Exception as e:
+        print(f"Error fetching trainer rating: {e}")
+        return None
+
+
+def add_fitness_center_trainer_rating(review):
+    if review is None:
+        return False
+    try:
+        review = review_to_reviewdb(review)
+        g.db.add(review)
+        g.db.commit()
+        return True
+    except Exception as e:
+        print(f"Error adding trainer rating: {e}")
+        return False
+
+
+def modify_fitness_center_trainer_rating_in_db(fc_id, trainer_id):
+    return True
+
