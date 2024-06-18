@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from database.sqlalchemy_utils import Base
 
+
 class FitnessCenter(Base):
     __tablename__ = 'fitness_centers'
     id = Column(Integer, primary_key=True, autoincrement=True, unique=True, nullable=False)

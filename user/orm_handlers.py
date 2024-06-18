@@ -80,7 +80,9 @@ def get_trainer_services_list():
 
 def get_trainer_service(trainer_service_id):
     try:
-        trainer_service = g.db.query(TrainerService).filter(TrainerService.id == trainer_service_id).first()
+        trainer_service = (g.db.query(TrainerService)
+                           .filter(TrainerService.id == trainer_service_id)
+                           .first())
         return trainer_service
     except Exception as e:
         print(f"Error fetching trainer service with id {trainer_service_id}: {e}")
@@ -89,7 +91,9 @@ def get_trainer_service(trainer_service_id):
 
 def get_trainer_schedule(trainer_id, date):
     try:
-        schedule = g.db.query(Schedule).filter(Schedule.trainer_id == trainer_id, Schedule.date == date).first()
+        schedule = (g.db.query(Schedule)
+                    .filter(Schedule.trainer_id == trainer_id, Schedule.date == date)
+                    .first())
         return schedule
     except Exception as e:
         print(f"Error fetching schedule: {e}")

@@ -17,6 +17,7 @@ def add_user():
     user_data = request.form
     user = User(user_data['name'], user_data['date_of_birth'], user_data['address'], user_data['phone'],
                 user_data['email'])
+    user.fitness_center_id = int(user_data['fc_id'])
     result = hndl.insert_user_to_db(user)
     if result:
         return jsonify({'message': f"New user {user.name}: created successfully"}), 201

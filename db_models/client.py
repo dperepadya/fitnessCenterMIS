@@ -13,7 +13,7 @@ class Client(Base):
     phone = Column(String)
     email = Column(String)
     funds = Column(Integer)
-    fitness_center_id = Column(Integer, ForeignKey('fitness_centers.id'))
+    fitness_center_id = Column(Integer, ForeignKey('fitness_centers.id'), nullable=False)
 
     credentials = relationship("Credential", back_populates="client")
     orders = relationship("Order", back_populates="client")

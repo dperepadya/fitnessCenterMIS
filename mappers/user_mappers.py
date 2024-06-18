@@ -2,14 +2,16 @@ from db_models.client import Client
 from models.user import User
 
 
-def userdb_to_user(client):
-    return User(
-        name=client.name,
-        date_of_birth=client.date_of_birth,
-        address=client.address,
-        phone=client.phone,
-        email=client.email
+def userdb_to_user(user):
+    user = User(
+        name=user.name,
+        date_of_birth=user.date_of_birth,
+        address=user.address,
+        phone=user.phone,
+        email=user.email,
     )
+    user.fitness_center_id = user.fitness_center_id
+    return user
 
 
 def userdb_to_userdict(user):
@@ -28,7 +30,8 @@ def user_to_userdb(user):
         address=user.address,
         phone=user.phone,
         email=user.email,
-        funds=user.funds
+        funds=user.funds,
+        fitness_center_id=user.fitness_center_id
     )
     client.id = user.id
     return client

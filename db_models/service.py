@@ -14,6 +14,6 @@ class Service(Base):
     max_attendees = Column(Integer, nullable=False)
     fitness_center_id = Column(Integer, ForeignKey('fitness_centers.id'))
 
-    fitness_center = relationship("FitnessCenter", back_populates="services")
+    fitness_center = relationship("FitnessCenter", back_populates="service")
     orders = relationship("Order", back_populates="service")
     trainers = relationship("TrainerService", back_populates="service")

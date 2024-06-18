@@ -9,6 +9,6 @@ class Credential(Base):
     id = Column(Integer, primary_key=True)
     login = Column(String)
     password = Column(String)
-    client_id = Column(Integer, ForeignKey('clients.id'))
+    client_id = Column(Integer, ForeignKey('clients.id'), nullable=False)
 
     client = relationship("Client", back_populates="credentials")

@@ -11,6 +11,7 @@ class User:
         self.email = email
         self.funds = 0
         self.id = 0
+        self.fitness_center_id = None
 
     def deposit(self, amount):
         self.funds = amount

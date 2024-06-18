@@ -263,9 +263,9 @@ def get_fitness_center_service_trainers_from_db(fc_id, serv_id):
     # db command
     table = 'trainer_services'
     select_params = {'trainers.name': 'name', 'trainers.age': 'age', 'trainers.gender': 'gender'}
-    join_tables = ['services', 'trainers', 'fitness_centers']
-    join_params = {'service_id': 'id', 'trainer_id': 'id', 'fitness_center_id': 'id'}
-    where_cond = {'fitness_centers.id': fc_id, 'services.id': serv_id}
+    join_tables = ['services', 'trainers']
+    join_params = {'service_id': 'id', 'trainer_id': 'id'}
+    where_cond = {'services.fitness_center_id': fc_id, 'trainers.fitness_center_id': fc_id, 'services.id': serv_id}
     query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
     print(query)
     with SQLLiteDatabase('fitnessdb.db') as db:
@@ -278,9 +278,9 @@ def get_fitness_center_trainer_services_from_db(fc_id, trainer_id):
     table = 'trainer_services'
     select_params = {'services.name': 'name', 'services.duration': 'duration', 'services.price': 'price',
                      'services.description': 'description', 'services.max_attendees': 'max_attendees'}
-    join_tables = ['services', 'trainers', 'fitness_centers']
-    join_params = {'service_id': 'id', 'fitness_center_id': 'id'}
-    where_cond = {'fitness_centers.id': fc_id, 'trainers.id': trainer_id}
+    join_tables = ['services', 'trainers']
+    join_params = {'service_id': 'id', 'trainer_id': 'id'}
+    where_cond = {'services.fitness_center_id': fc_id, 'trainers.fitness_center_id': fc_id, 'trainers.id': trainer_id}
     query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
     print(query)
     with SQLLiteDatabase('fitnessdb.db') as db:
@@ -291,14 +291,15 @@ def get_fitness_center_trainer_services_from_db(fc_id, trainer_id):
 def get_fitness_center_service_trainer_from_db(fc_id, serv_id, trainer_id):
     # db command
 
-    table = 'trainers'
+    table = 'trainer_services'
     select_params = {'trainers.id': 'id', 'trainers.name': 'name', 'trainers.age': 'age',
                      'trainers.gender': 'gender', 'trainers.fitness_center_id': 'fc_id',
-                     'trainers.service_id': 'service_id'}
+                     'services.id': 'service_id'}
 
-    join_tables = ['services', 'fitness_centers']
-    join_params = {'service_id': 'id', 'fitness_center_id': 'id'}
-    where_cond = {'fitness_centers.id': fc_id, 'services.id': serv_id, 'trainers.id': trainer_id}
+    join_tables = ['services', 'trainers']
+    join_params = {'service_id': 'id', 'trainer_id': 'id'}
+    where_cond = {'services.fitness_center_id': fc_id, 'trainers.fitness_center_id': fc_id,
+                  'services.id': serv_id, 'trainers.id': trainer_id}
     query = qg.get_select_sql_join_query(table, select_params, join_tables, join_params, where_cond)
     print(query)
     with SQLLiteDatabase('fitnessdb.db') as db:
