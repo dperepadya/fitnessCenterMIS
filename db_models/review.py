@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, ForeignKey, Column, Date, String
 from sqlalchemy.orm import relationship
 
-from database.sqlalchemy_utils import Base
+from database.database import Base
 
 
 class Review(Base):
@@ -13,5 +13,5 @@ class Review(Base):
     client_id = Column(Integer, ForeignKey('clients.id'), nullable=False)
     trainer_id = Column(Integer, ForeignKey('trainers.id'), nullable=False)
 
-    client = relationship("Client", back_populates="reviews")
-    trainer = relationship("Trainer", back_populates="reviews")
+    client = relationship("Client", back_populates="review")
+    trainer = relationship("Trainer", back_populates="review")

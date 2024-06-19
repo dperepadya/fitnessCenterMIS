@@ -33,6 +33,5 @@ def trainer_to_trainerdb(existing_trainer, trainer):
     existing_trainer.age = trainer.age,
     existing_trainer.gender = trainer.gender,
     existing_trainer.fitness_center_id = trainer.fitness_center_id
-    return existing_trainer
 
 

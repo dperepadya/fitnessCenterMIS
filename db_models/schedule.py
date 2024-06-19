@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, ForeignKey, Column, Date, Time
 from sqlalchemy.orm import relationship
 
-from database.sqlalchemy_utils import Base
+from database.database import Base
 
 
 class Schedule(Base):

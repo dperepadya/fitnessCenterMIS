@@ -4,17 +4,18 @@ from flask import g
 from sqlalchemy import and_
 from sqlalchemy.orm import joinedload
 
+from database.database import db_session
 from db_models.client import Client
 from db_models.order import Order
 from db_models.schedule import Schedule
 from db_models.trainer_services import TrainerService
 from mappers.order_mappers import order_to_orderdb
-from mappers.user_mappers import user_to_userdb
+from mappers.user_mappers import user_to_userdb, existing_user_to_userdb
 from user.handlers import get_available_time_slots as get_time_slots
 
 
 def get_user_from_db(user_id):
-    user = g.db.query(Client).filter(Client.id == user_id).first()
+    user = db_session.query(Client).filter(Client.id == user_id).first()
     if user:
         return user
     else:
@@ -25,16 +26,16 @@ def update_user_in_db(user):
     if user is None:
         return False
     try:
-        db_user = g.db.query(Client).filter(Client.id == user.id).first()
+        db_user = db_session.query(Client).filter(Client.id == user.id).first()
         if db_user is None:
             return False
-        user_to_userdb(db_user, user)
+        existing_user_to_userdb(db_user, user)
         if db_user is None:
             return False
-        g.db.commit()
+        db_session.commit()
         return True
     except Exception as e:
-        g.db.rollback()
+        db_session.rollback()
         print(f"Error inserting user: {e}")
         return False
 
@@ -43,14 +44,14 @@ def update_user_funds_in_db(user_id, funds):
     if funds == 0:
         return True
     try:
-        db_user = g.db.query(Client).filter(Client.id == user_id).first()
+        db_user = db_session.query(Client).filter(Client.id == user_id).first()
         if db_user is None:
             return False
         db_user.funds += funds
-        g.db.commit()
+        db_session.commit()
         return True
     except Exception as e:
-        g.db.rollback()
+        db_session.rollback()
         print(f"Error updating user funds: {e}")
         return False
 
@@ -60,18 +61,18 @@ def add_user_order_to_db(order):
         return False
     try:
         order = order_to_orderdb(order)
-        g.db.add(order)
-        g.db.commit()
+        db_session.add(order)
+        db_session.commit()
         return True
     except Exception as e:
-        g.db.rollback()
+        db_session.rollback()
         print(f"Error adding order: {e}")
         return False
 
 
 def get_trainer_services_list():
     try:
-        trainer_services = g.db.query(TrainerService).all()
+        trainer_services = db_session.query(TrainerService).all()
         return trainer_services
     except Exception as e:
         print(f"Error fetching trainer services list: {e}")
@@ -80,7 +81,7 @@ def get_trainer_services_list():
 
 def get_trainer_service(trainer_service_id):
     try:
-        trainer_service = (g.db.query(TrainerService)
+        trainer_service = (db_session.query(TrainerService)
                            .filter(TrainerService.id == trainer_service_id)
                            .first())
         return trainer_service
@@ -91,7 +92,7 @@ def get_trainer_service(trainer_service_id):
 
 def get_trainer_schedule(trainer_id, date):
     try:
-        schedule = (g.db.query(Schedule)
+        schedule = (db_session.query(Schedule)
                     .filter(Schedule.trainer_id == trainer_id, Schedule.date == date)
                     .first())
         return schedule
@@ -102,7 +103,7 @@ def get_trainer_schedule(trainer_id, date):
 
 def get_orders_from_db(client_id, service_id, trainer_id, date):
     try:
-        orders = g.db.query(Order).filter(
+        orders = db_session.query(Order).filter(
             Order.client_id == client_id,
             Order.service_id == service_id,
             Order.trainer_id == trainer_id,
@@ -120,7 +121,7 @@ def get_available_time_slots(client_id, trainer_service_id, date):
 
 def get_user_orders_from_db(user_id):
     try:
-        orders = g.db.query(Order).options(
+        orders = db_session.query(Order).options(
             joinedload(Order.service),
             joinedload(Order.trainer)
         ).filter(Order.client_id == user_id).all()
@@ -149,7 +150,7 @@ def get_user_orders_from_db(user_id):
 
 def get_user_order_from_db(user_id, ord_id):
     try:
-        order = g.db.query(Order).options(
+        order = db_session.query(Order).options(
             joinedload(Order.service),
             joinedload(Order.trainer)
         ).filter(
@@ -179,14 +180,14 @@ def get_user_order_from_db(user_id, ord_id):
 
 def delete_user_order_from_db(ord_id):
     try:
-        order = g.db.query(Order).filter(Order.id == ord_id).first()
+        order = db_session.query(Order).filter(Order.id == ord_id).first()
         if order is None:
             return False
-        g.db.delete(order)
-        g.db.commit()
+        db_session.delete(order)
+        db_session.commit()
         return True
 
     except Exception as e:
-        g.db.rollback()
+        db_session.rollback()
         print(f"Error deleting order: {e}")
         return False

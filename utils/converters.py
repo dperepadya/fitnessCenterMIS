@@ -23,3 +23,9 @@ class Converter:
                 return ', '.join(f"{Converter.convert_to_string(item)}" for item in data)
         else:
             return str(data)
+
+
+def safe_assign(target, attr, value):
+    if isinstance(value, tuple):
+        value = value[0]
+    setattr(target, attr, value)

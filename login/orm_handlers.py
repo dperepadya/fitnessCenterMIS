@@ -1,27 +1,26 @@
 from flask import g
-
-from database.sqlalchemy_utils import Session
-from db_models.credentials import Credential
+import logging
+from database.database import db_session
+from db_models.credentials import Credentials
 from db_models.client import Client
 from mappers.user_mappers import userdb_to_userdict
 
 
 def authenticate(username, password):
-    if username and password:
-        user = get_user_from_db(username, password)
-        # print(user['client_name'])
-        if user:
-            return userdb_to_userdict(user)
-        return user
-    else:
+    if username is None or password is None:
+        return False
+    user = get_user_from_db(username, password)
+    # print(user.name)
+    if user is None:
         return None
+    return userdb_to_userdict(user)
 
 
 def get_user_from_db(username, password):
     try:
-        user = g.db.query(Client).join(Credential).filter(
-            Credential.login == username, Credential.password == password
-        ).first()
+        user = (db_session.query(Client)
+                .join(Credentials)
+                .filter(Credentials.login == username, Credentials.password == password).first())
         return user
     except Exception as e:
         print(f"Error fetching user: {e}")

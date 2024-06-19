@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, ForeignKey, String, Float, Text
 from sqlalchemy.orm import relationship
 
-from database.sqlalchemy_utils import Base
+from database.database import Base
 
 
 class Service(Base):
@@ -15,5 +15,5 @@ class Service(Base):
     fitness_center_id = Column(Integer, ForeignKey('fitness_centers.id'))
 
     fitness_center = relationship("FitnessCenter", back_populates="service")
-    orders = relationship("Order", back_populates="service")
-    trainers = relationship("TrainerService", back_populates="service")
+    order = relationship("Order", back_populates="service")
+    trainer_service = relationship("TrainerService", back_populates="service")

@@ -1,5 +1,6 @@
 from db_models.fitness_center import FitnessCenter as FcModel
 from models.fitness_center import FitnessCenter as FitnessCenter
+from utils.converters import safe_assign
 
 
 def fc_to_fcdb(fc):
@@ -13,15 +14,13 @@ def fc_to_fcdb(fc):
     )
 
 
-def fc_to_fcdb(existing_fc, fc):
+def existing_fc_to_fcdb(existing_fc, fc):
     if existing_fc is None or fc is None:
         return None
-    existing_fc.name = fc.name,
-    existing_fc.address = fc.address,
-    existing_fc.phone = fc.phone,
-    existing_fc.email = fc.email
-
-    return existing_fc
+    safe_assign(existing_fc, 'name', fc.name)
+    safe_assign(existing_fc, 'address', fc.address)
+    safe_assign(existing_fc, 'phone', fc.phone)
+    safe_assign(existing_fc, 'email', fc.email)
 
 
 def fcdb_to_fc(fc):

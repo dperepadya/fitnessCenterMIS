@@ -1,20 +1,22 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Float
 from sqlalchemy.orm import relationship
 
-from database.sqlalchemy_utils import Base
+from database.database import Base
 
 
 class Client(Base):
     __tablename__ = 'clients'
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True, unique=True, nullable=False)
     name = Column(String)
-    address = Column(String)
     date_of_birth = Column(String)
+    address = Column(String)
     phone = Column(String)
     email = Column(String)
-    funds = Column(Integer)
+    funds = Column(Float)
     fitness_center_id = Column(Integer, ForeignKey('fitness_centers.id'), nullable=False)
 
-    credentials = relationship("Credential", back_populates="client")
-    orders = relationship("Order", back_populates="client")
+    fitness_center = relationship("FitnessCenter", back_populates="client")
+    credentials = relationship("Credentials", back_populates="client")
+    order = relationship("Order", back_populates="client")
+    review = relationship("Review", back_populates="client")
 

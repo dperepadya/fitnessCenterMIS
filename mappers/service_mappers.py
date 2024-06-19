@@ -37,4 +37,4 @@ def service_to_servicedb(existing_service, service):
     existing_service.age = service.age,
     existing_service.gender = service.gender,
     existing_service.fitness_center_id = service.fitness_center_id
-    return existing_service
+

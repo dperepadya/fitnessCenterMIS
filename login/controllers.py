@@ -20,5 +20,5 @@ def login():
     if user is None:
         return redirect(url_for('login.get_login_form'))
     session['user'] = user
-    return jsonify({'message': f"{user['client_name']}: Login successful"}), 200
+    return jsonify({'message': f"{user['name']}: Login successful"}), 200
 

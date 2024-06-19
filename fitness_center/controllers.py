@@ -54,7 +54,7 @@ def get_edit_fitness_center_form(fc_id):
     fc_info = hndl.get_fitness_center_from_db(fc_id)
     if fc_info is None:
         return jsonify({'message': 'Cannot find a fitness center'}), 404
-    return render_template('fitness_center_edit.html', fc_id=fc_id)
+    return render_template('fitness_center_edit.html', fc=fc_info, fc_id=fc_id)
 
 
 @fitness_center_bp.post('/<int:fc_id>/edit')
@@ -62,6 +62,7 @@ def get_edit_fitness_center_form(fc_id):
 def edit_fitness_center(fc_id):
     fc_data = request.form
     fc = FitnessCenter(fc_data['name'], fc_data['address'], fc_data['phone'], fc_data['email'])
+    fc.id = fc_id
     if hndl.modify_fitness_center_in_db(fc):
         return jsonify({'message': 'Fitness Center updated successfully'}), 201
     else:
