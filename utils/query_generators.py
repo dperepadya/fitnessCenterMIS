@@ -1,5 +1,3 @@
-
-
 class QueryGenerator:
     def __init__(self):
         pass

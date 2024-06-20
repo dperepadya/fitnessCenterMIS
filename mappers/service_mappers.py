@@ -1,5 +1,6 @@
 from db_models.service import Service as ServiceModel
 from models.service import Service as Service
+from utils.converters import safe_assign
 
 
 def servicedb_to_service(service):
@@ -29,12 +30,13 @@ def service_to_servicedb(service):
     )
 
 
-def service_to_servicedb(existing_service, service):
+def existing_service_to_servicedb(existing_service, service):
     if existing_service is None or service is None:
         return None
-    existing_service.id = service.id
-    existing_service.name = service.name,
-    existing_service.age = service.age,
-    existing_service.gender = service.gender,
-    existing_service.fitness_center_id = service.fitness_center_id
+    safe_assign(existing_service, 'id', service.id)
+    safe_assign(existing_service, 'name', service.name)
+    safe_assign(existing_service, 'age', service.age)
+    safe_assign(existing_service, 'gender', service.gender)
+    safe_assign(existing_service, 'fitness_center_id', service.fitness_center_id)
+
 

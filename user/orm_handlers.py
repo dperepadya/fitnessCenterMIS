@@ -15,7 +15,9 @@ from user.handlers import get_available_time_slots as get_time_slots
 
 
 def get_user_from_db(user_id):
-    user = db_session.query(Client).filter(Client.id == user_id).first()
+    user = (db_session.query(Client)
+            .filter(Client.id == user_id)
+            .first())
     if user:
         return user
     else:
@@ -26,7 +28,9 @@ def update_user_in_db(user):
     if user is None:
         return False
     try:
-        db_user = db_session.query(Client).filter(Client.id == user.id).first()
+        db_user = (db_session.query(Client)
+                   .filter(Client.id == user.id)
+                   .first())
         if db_user is None:
             return False
         existing_user_to_userdb(db_user, user)
@@ -44,7 +48,9 @@ def update_user_funds_in_db(user_id, funds):
     if funds == 0:
         return True
     try:
-        db_user = db_session.query(Client).filter(Client.id == user_id).first()
+        db_user = (db_session.query(Client)
+                   .filter(Client.id == user_id)
+                   .first())
         if db_user is None:
             return False
         db_user.funds += funds
@@ -103,12 +109,12 @@ def get_trainer_schedule(trainer_id, date):
 
 def get_orders_from_db(client_id, service_id, trainer_id, date):
     try:
-        orders = db_session.query(Order).filter(
+        orders = (db_session.query(Order).filter(
             Order.client_id == client_id,
             Order.service_id == service_id,
             Order.trainer_id == trainer_id,
-            Order.date == date
-        ).all()
+            Order.date == date)
+            .all())
         return orders
     except Exception as e:
         print(f"Error fetching orders: {e}")

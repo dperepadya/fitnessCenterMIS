@@ -94,10 +94,8 @@ def get_fitness_center_services_from_db(fc_id):
 def get_fitness_center_service_from_db(fc_id, serv_id):
     try:
         fc_service = (db_session.query(Service)
-                      .filter(
-            Service.fitness_center_id == fc_id,
-            Service.id == serv_id
-        ).first())
+                      .filter(Service.fitness_center_id == fc_id, Service.id == serv_id)
+                      .first())
         return fc_service
     except Exception as e:
         print(f"Error fetching fitness center service: {e}")
@@ -120,10 +118,9 @@ def add_fitness_center_service_to_db(service):
 
 def delete_fitness_center_service_from_db(fc_id, serv_id):
     try:
-        service = db_session.query(Service).filter(
-            Service.fitness_center_id == fc_id,
-            Service.id == serv_id
-        ).first()
+        service = (db_session.query(Service)
+                   .filter(Service.fitness_center_id == fc_id, Service.id == serv_id)
+                   .first())
         if service:
             db_session.delete(service)
             db_session.commit()
@@ -138,7 +135,8 @@ def delete_fitness_center_service_from_db(fc_id, serv_id):
 def get_fitness_center_trainers_from_db(fc_id):
     try:
         fc_trainers = (db_session.query(Trainer)
-                       .filter(Trainer.fitness_center_id == fc_id).all())
+                       .filter(Trainer.fitness_center_id == fc_id)
+                       .all())
         return fc_trainers
     except Exception as e:
         print(f"Error fetching fitness center trainers: {e}")
@@ -174,10 +172,8 @@ def add_fitness_center_trainer_to_db(trainer):
 def delete_fitness_center_trainer_from_db(fc_id, trainer_id):
     try:
         trainer = (db_session.query(Trainer)
-                   .filter(
-                        Trainer.fitness_center_id == fc_id,
-                        Trainer.id == trainer_id
-                    ).first())
+                   .filter(Trainer.fitness_center_id == fc_id, Trainer.id == trainer_id)
+                   .first())
         if trainer:
             db_session.delete(trainer)
             db_session.commit()
@@ -192,13 +188,11 @@ def delete_fitness_center_trainer_from_db(fc_id, trainer_id):
 def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
     try:
         fc_trainer_rating = (db_session.query(Client.name.label('client_name'),
-                                        Review.grade.label('grade'))
+                                              Review.grade.label('grade'))
                              .join(Review, Review.client_id == Client.id)
                              .join(Trainer, Trainer.id == Review.trainer_id)
-                             .filter(
-                                Trainer.fitness_center_id == fc_id,
-                                Trainer.id == trainer_id
-                            ).all())
+                             .filter(Trainer.fitness_center_id == fc_id, Trainer.id == trainer_id)
+                             .all())
         return fc_trainer_rating
     except Exception as e:
         print(f"Error fetching trainer rating: {e}")
@@ -226,9 +220,9 @@ def modify_fitness_center_trainer_rating_in_db(fc_id, trainer_id):
 def get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id):
     try:
         fc_trainer_schedule = (db_session.query(Trainer.name.label('trainer_name'),
-                                          Schedule.date.label('date'),
-                                          Schedule.start_time.label('start_time'),
-                                          Schedule.end_time.label('end_time'))
+                                                Schedule.date.label('date'),
+                                                Schedule.start_time.label('start_time'),
+                                                Schedule.end_time.label('end_time'))
                                .join(Schedule, Schedule.trainer_id == Trainer.id)
                                .filter(Trainer.fitness_center_id == fc_id, Trainer.id == trainer_id)
                                .all())
@@ -292,10 +286,10 @@ def get_fitness_center_service_trainers_from_db(fc_id, serv_id):
 def get_fitness_center_trainer_services_from_db(fc_id, trainer_id):
     try:
         fc_trainer_servs = (db_session.query(Service.name.label('name'),
-                                       Service.duration.label('duration'),
-                                       Service.price.label('price'),
-                                       Service.description.label('description'),
-                                       Service.max_attendees.label('max_attendees'))
+                                             Service.duration.label('duration'),
+                                             Service.price.label('price'),
+                                             Service.description.label('description'),
+                                             Service.max_attendees.label('max_attendees'))
                             .join(TrainerService, TrainerService.service_id == Service.id)
                             .join(Trainer, TrainerService.trainer_id == Trainer.id)
                             .filter(Trainer.id == trainer_id,
@@ -311,11 +305,11 @@ def get_fitness_center_trainer_services_from_db(fc_id, trainer_id):
 def get_fitness_center_service_trainer_from_db(fc_id, serv_id, trainer_id):
     try:
         fc_serv_trainer = (db_session.query(Trainer.name.label('id'),
-                                      Trainer.name.label('name'),
-                                      Trainer.age.label('age'),
-                                      Trainer.gender.label('gender'),
-                                      Trainer.fitness_center_id.label('fc_id'),
-                                      Service.id.label('service_id'))
+                                            Trainer.name.label('name'),
+                                            Trainer.age.label('age'),
+                                            Trainer.gender.label('gender'),
+                                            Trainer.fitness_center_id.label('fc_id'),
+                                            Service.id.label('service_id'))
                             .join(TrainerService, TrainerService.service_id == Service.id)
                             .join(Trainer, TrainerService.trainer_id == Trainer.id)
                             .filter(Service.id == serv_id, Trainer.id == trainer_id,

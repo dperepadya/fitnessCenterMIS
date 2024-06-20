@@ -45,6 +45,5 @@ def existing_user_to_userdb(existing_user, user):
     existing_user.phone = user.phone,
     existing_user.email = user.email,
     existing_user.funds = user.funds
-    # existing_user.id = user.id
     existing_user.fitness_center_id = user.fitness_center_id
 
