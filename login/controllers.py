@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, session, render_template, redirect, url_for
 from login import orm_handlers as hndl
+from utils.celery_tasks import send_mail
 
 login_bp = Blueprint('login', __name__)
 
@@ -20,5 +21,9 @@ def login():
     if user is None:
         return redirect(url_for('login.get_login_form'))
     session['user'] = user
-    return jsonify({'message': f"{user['name']}: Login successful"}), 200
+    msg = f"{user['name']}: Login successful"
+
+    send_mail.apply_async(user['email'], msg)
+
+    return jsonify({'message': msg}), 200
 

@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request, render_template
 from register import orm_handlers as hndl
 from models.user import User
 
+from utils.celery_tasks import send_mail
+
 register_bp = Blueprint('register', __name__)
 
 
@@ -20,6 +22,10 @@ def add_user():
     user.fitness_center_id = int(user_data['fc_id'])
     result = hndl.insert_user_to_db(user)
     if result:
-        return jsonify({'message': f"New user {user.name}: created successfully"}), 201
+        msg = f"New user {user.name}: created successfully"
+
+        # send_mail.apply_async(user_data['email'], msg)
+
+        return jsonify({'message': msg}), 201
     else:
         return jsonify({'message': 'Cannot create new user '}), 400

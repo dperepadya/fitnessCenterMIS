@@ -18,6 +18,10 @@ def userdb_to_userdict(user):
     return {
         'id': user.id,
         'name': user.name,
+        'date_of_birth': user.date_of_birth,
+        'address': user.address,
+        'phone': user.phone,
+        'email': user.email,
         'funds': user.funds,
         'fitness_center_id': user.fitness_center_id
     }
