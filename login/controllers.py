@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, session, render_template, redirect, url_for
 from login import orm_handlers as hndl
-from utils.celery_tasks import send_mail
+from celery_tasks import send_mail
 
 login_bp = Blueprint('login', __name__)
 

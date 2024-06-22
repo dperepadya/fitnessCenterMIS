@@ -1,10 +1,6 @@
 import os
-
-from flask import Flask, g
-
+from flask import Flask
 from database import database
-from database.database import db_session
-
 from fitness_center.controllers import fitness_center_bp
 from login.controllers import login_bp
 from logout.controllers import logout_bp

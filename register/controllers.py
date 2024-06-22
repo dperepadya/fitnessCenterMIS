@@ -2,8 +2,6 @@ from flask import Blueprint, jsonify, request, render_template
 from register import orm_handlers as hndl
 from models.user import User
 
-from utils.celery_tasks import send_mail
-
 register_bp = Blueprint('register', __name__)
 
 

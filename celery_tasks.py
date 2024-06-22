@@ -1,6 +1,6 @@
 from celery import Celery
 
-app = Celery('utils.celery_tasks', broker='pyamqp://guest@localhost//')
+app = Celery('celery_tasks', broker='pyamqp://guest@localhost//')
 
 
 @app.task
