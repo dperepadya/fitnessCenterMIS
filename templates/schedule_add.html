@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule/add" method="post">
+        <input type="hidden" name="fc_id" value="{{ fc_id }}">
+        <input type="hidden" name="trainer_id" value="{{ trainer_id }}">
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+        <br>
+        <label for="start_time">Start time:</label>
+        <input type="time" id="start_time" name="start_time" required>
+        <br>
+        <label for="end_time">End time:</label>
+        <input type="time" id="end_time" name="end_time" required>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

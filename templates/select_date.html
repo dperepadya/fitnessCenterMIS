@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Select Date</h1>
+    <form action="/user/select_time" method="get">
+        <input type="hidden" name="trainer_service_id" value="{{ trainer_service_id }}">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+        <input type="submit" value="Next">
+    </form>
+</body>
+</html>

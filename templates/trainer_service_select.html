@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Select Trainer and Service</h1>
+    <form action="/user/select_date" method="get">
+        <label for="trainer_service">Trainer and Service:</label>
+        <select name="trainer_service_id" id="trainer_service" required>
+            {% for ts in trainer_services %}
+                <option value="{{ ts.id }}">{{ ts.trainer_id }} - {{ ts.service_id }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Next">
+    </form>
+</body>
+</html>

@@ -1,0 +1,28 @@
+Docker
+
+RabbitMQ
+docker run -d -p 5672:5672 rabbitmq
+# docker run -d --hostname my-rabbit --name some-rabbit rabbitmq:3
+Management version
+# docker run -d --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management
+
+Celery
+pip install celery
+
+Check:
+# python -c "import celery; print(celery.__version__)"
+
+Run worker:
+celery -A celery_tasks worker --loglevel=INFO
+Windows:
+pip install eventlet
+celery -A celery_tasks worker -l info -P eventlet
+
+Secrets:
+1. gone to Run>Edit Configurations and added my env vars there
+2. gone to Settings>Build,Execution,Deployment>Console>Python Console and added them there too
+3. gone to tools>Terminal and done the same.
+
+Set Session environment (Powershell)
+$env:EMAIL_PASSWORD="password"
+echo $env:EMAIL_PASSWORD

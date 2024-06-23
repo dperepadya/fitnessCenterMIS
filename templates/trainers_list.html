@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Trainers List</h1>
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Gender</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in trainers %}
+                <tr>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.age }}</td>
+                    <td>{{ row.gender }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

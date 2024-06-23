@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Select Time</h1>
+    <form action="/user/orders/add" method="post">
+        <input type="hidden" name="trainer_service_id" value="{{ trainer_service_id }}">
+        <input type="hidden" name="date" value="{{ date }}">
+        <label for="time">Available Time Slots:</label>
+        <select name="time" id="time" required>
+            {% for slot in available_time_slots %}
+                <option value="{{ slot }}">{{ slot }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form action="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/edit" method="post">
+        <input type="hidden" name="fc_id" value="{{ fc_id }}">
+        <input type="hidden" name="trainer_id" value="{{ trainer_id }}">
+        <label for="name">Name:       </label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="age">Age:  </label>
+        <input type="number" id="age" name="age" step="1" required><br>
+        <label for="gender">Gender: </label>
+        <input type="text" id="gender" name="gender" required><br>
+        <label for="capacity">Age:  </label>
+        <input type="number" id="capacity" name="capacity" step="1" required><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

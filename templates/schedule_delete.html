@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Trainer Schedule</h1>
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    <p><strong>Service ID:</strong> {{ trainer_id }}</p>
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in schedule %}
+                <tr>
+                    <td>{{ row.date }}</td>
+                    <td>{{ row.start_time }}</td>
+                    <td>{{ row.end_time }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>Delete an Reservation</h2>
+    <form action="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule/delete" method="post">
+        <label for="schedule_id">Enter the ID of the Reservation to be deleted:</label>
+        <input type="number" id="schedule_id" name="schedule_id" required>
+        <input type="submit" value="Delete">
+    </form>
+</body>
+</html>
