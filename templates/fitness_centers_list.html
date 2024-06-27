@@ -19,6 +19,7 @@
         <tbody>
             {% for row in fitness_centers %}
             <tr>
+                <td><a href="{{ url_for('get_fitness_center_info', fc_id=row.id) }}">{{ row.id }}</a>></td>
                 <td>{{ row.id }}</td>
                 <td>{{ row.name }}</td>
                 <td>{{ row.address }}</td>

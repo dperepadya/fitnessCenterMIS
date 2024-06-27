@@ -1,28 +1,58 @@
 Docker
 
 RabbitMQ
-docker run -d -p 5672:5672 rabbitmq
-# docker run -d --hostname my-rabbit --name some-rabbit rabbitmq:3
+    docker run -d -p 5672:5672 rabbitmq
+    # docker run -d --hostname my-rabbit --name some-rabbit rabbitmq:3
 Management version
-# docker run -d --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management
+    # docker run -d --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.13-management
 
 Celery
-pip install celery
+    pip install celery
 
 Check:
-# python -c "import celery; print(celery.__version__)"
+    # python -c "import celery; print(celery.__version__)"
 
 Run worker:
-celery -A celery_tasks worker --loglevel=INFO
+    celery -A celery_tasks worker --loglevel=INFO
 Windows:
-pip install eventlet
-celery -A celery_tasks worker -l info -P eventlet
+    pip install eventlet
+    celery -A celery_tasks worker -l info -P eventlet
 
 Secrets:
-1. gone to Run>Edit Configurations and added my env vars there
-2. gone to Settings>Build,Execution,Deployment>Console>Python Console and added them there too
-3. gone to tools>Terminal and done the same.
+    1. gone to Run>Edit Configurations and added my env vars there
+    2. gone to Settings>Build,Execution,Deployment>Console>Python Console and added them there too
+    3. gone to tools>Terminal and done the same.
 
 Set Session environment (Powershell)
-$env:EMAIL_PASSWORD="password"
-echo $env:EMAIL_PASSWORD
+    $env:EMAIL_PASSWORD="password"
+    echo $env:EMAIL_PASSWORD
+
+Alembic:
+Create a migration:
+    alembic revision -m "migration name" --autogenerate
+Set DB path in alembic.ini:
+    sqlalchemy.url = driver://user:pass@localhost/dbname
+Set Metadata (env.py)
+    from ... import Base
+    from db_models import ... (all modules with models)
+    target_metadata = Base.metadata
+Create a DB clone (alembic.ini:
+    # sqlalchemy.url = sqlite:///fitnessdb.db
+    sqlalchemy.url = sqlite:///fitnessdb_01.db
+    alembic revision -m "migration name" --autogenerate
+    Fill an empty new DB
+        alembic upgrade head
+    Navigation by revisions
+        alembic upgrade +2 - 2 versions from teh current
+        alembic downgrade -1 - previous version
+        alembic upgrade/downgrade revision ID go to specific revision (commit)
+
+Docker compose:
+    create compose.yaml
+    remove from Dockerfile copies of commands (CMD ["python", "app.py"])
+    docker compose up
+
+Postgres:
+    add DB at database.py alembic.ini
+    install psycopg2 package
+

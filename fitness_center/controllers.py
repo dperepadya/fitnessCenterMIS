@@ -20,12 +20,6 @@ def get_fitness_centers_list():
     fc_list = hndl.get_fitness_centers_from_db()
     if fc_list is None:
         return jsonify({'message': 'Fitness centers list is empty'}), 404
-    # print(type(fc_list))
-    # fc_list_str = Converter.convert_to_string(fc_list)
-    # user = session.get('user')
-    # user_name = user['client_name']
-    # print(user_name, fc_list_str)
-    # return jsonify({'message': f"{user_name} {fc_list_str}"}), 200
     return render_template('fitness_centers_list.html', fitness_centers=fc_list)
 
 

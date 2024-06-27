@@ -7,8 +7,8 @@ from email.mime.text import MIMEText
 from celery import Celery
 
 
-app = Celery('celery_tasks', broker='pyamqp://guest@localhost//')
-
+# app = Celery('celery_tasks', broker='pyamqp://guest@localhost//')
+app = Celery('tasks', broker='amqp://guest:guest@rabbit_mq:5672//')
 
 @app.task
 def send_mail(recipient, subject, msg):
