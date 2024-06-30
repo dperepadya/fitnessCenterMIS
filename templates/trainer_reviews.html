@@ -3,31 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <h1>Trainers Reviews</h1>
-        <table>
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
+    <table>
         <thead>
             <tr>
+                <th>Client</th>
                 <th>Date</th>
                 <th>Grade</th>
                 <th>Comment</th>
-                <th>Service</th>
-                <th>Client</th>
             </tr>
         </thead>
         <tbody>
             {% for row in reviews %}
                 <tr>
+                    <td>{{ row.client_name }}</td>
                     <td>{{ row.date }}</td>
                     <td>{{ row.grade }}</td>
-                    <td>{{ row.service }}</td>
-                    <td>{{ row.client_id }}</td>
+                    <td>{{ row.comment }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
-    <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
+    <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/rating/add"><button>Add review</button></a>
+    <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}"><button>Back</button></a>
+
+    <a href="/"><button>Home</button></a>
 </body>
 </html>

@@ -188,12 +188,15 @@ def delete_fitness_center_trainer_from_db(fc_id, trainer_id):
 def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
     try:
         params = db_session.query(Client.name.label('client_name'),
-                                  Review.grade.label('grade'))
+                                  Review.date.label('date'),
+                                  Review.grade.label('grade'),
+                                  Review.comment.label('comment'))
         fc_trainer_rating = (params
                              .join(Review, Review.client_id == Client.id)
                              .join(Trainer, Trainer.id == Review.trainer_id)
                              .filter(Trainer.fitness_center_id == fc_id, Trainer.id == trainer_id)
                              .all())
+        # print(params.statement.compile(compile_kwargs={"literal_binds": True}))
         return fc_trainer_rating
     except Exception as e:
         print(f"Error fetching trainer rating: {e}")

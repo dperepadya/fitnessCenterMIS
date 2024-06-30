@@ -3,13 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <h1>Fitness center Information</h1>
+    {% if user_name|length > 0 %}
+        <p><strong>Client:</strong> {{ user_name }}</p>
+    {% endif %}
     <p><strong>ID:</strong> {{ fc.id }}</p>
     <p><strong>Name:</strong> {{ fc.name }}</p>
     <p><strong>Address:</strong> {{ fc.address }}</p>
     <p><strong>Phone:</strong> {{ fc.phone }}</p>
     <p><strong>Email:</strong> {{ fc.email }}</p>
+    <a href="/fitness_center/{{ fc.id }}/services"><button>Services</button></a>
+    <a href="/fitness_center/{{ fc.id }}/trainers"><button>Trainers</button></a>
+    <a href="/fitness_center"><button>Fitness centers</button></a>
+    <a href="/"><button>Home</button></a>
+    {% if is_admin %}
+        <a href="/fitness_center/{{ fc.id }}/edit"><button>Edit</button></a>
+        <a href="/fitness_center/{{ fc.id }}/delete"><button>Delete</button></a>
+    {% endif %}
 </body>
 </html>

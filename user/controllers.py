@@ -1,11 +1,10 @@
-from datetime import datetime
+# from datetime import datetime
 
 from flask import Blueprint, jsonify, request, session, render_template
 
 from models.order import Order
 from user import orm_handlers as hndl
 from models.user import User
-from utils.converters import Converter
 from utils.login_decorator import check_user_login
 
 user_bp = Blueprint('user', __name__)
@@ -33,13 +32,15 @@ def get_user():
 @check_user_login
 def get_user_edit_form():
     user = session.get('user')  # User is defined after Login
+    if user is None:
+        return jsonify({'message': 'Cannot find user'}), 404
     user_id = user['id']
     user_info = hndl.get_user_from_db(user_id)
     if user_info is None:
-        return jsonify({'message': 'Cannot find user'}), 404
-    if user_info['date_of_birth'] is not None:
-        user_info['date_of_birth'] = datetime.strptime(user_info['date_of_birth'],
-                                                       '%d.%m.%Y').strftime('%Y-%m-%d')
+        return jsonify({'message': f'Cannot find user {user_id}'}), 404
+    # if user_info['date_of_birth'] is not None:
+    #    user_info['date_of_birth'] = datetime.strptime(user_info['date_of_birth'],
+    #                                                   '%d.%m.%Y').strftime('%Y-%m-%d')
     return render_template('client_edit.html', user=user_info, user_id=user_id)
 
 
@@ -48,8 +49,8 @@ def edit_user():
     user_data = request.form
     user_id = user_data['user_id']
     date_of_birth = user_data['date_of_birth']
-    if date_of_birth is not None:
-        date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%d').strftime('%d.%m.%Y')
+    # if date_of_birth is not None:
+    #    date_of_birth = datetime.strptime(date_of_birth, '%Y-%m-%d').strftime('%d.%m.%Y')
     user = User(user_data['name'], date_of_birth, user_data['address'], user_data['phone'],
                 user_data['email'])
     user.id = user_id
@@ -157,7 +158,7 @@ def delete_user_order(ord_id):
         return jsonify({'message': 'Cannot delete the Order'}), 404
 
 # Reservations handling ################################
-# Main endpoint
+# 1 st Main endpoint
 
 
 @user_bp.get('/orders/add')
@@ -169,7 +170,7 @@ def select_trainer_service_form():
     return render_template('trainer_service_select.html', trainer_services=trainer_services)
 
 # 2nd endpoint: Select a date of desired reservation
-# It's being called from "Trainer & Service" from
+# It's being called from "Trainer & Service" form
 # Outputs: trainer_service id
 
 
@@ -190,8 +191,8 @@ def select_time():
     trainer_service_id = request.args.get('trainer_service_id')
     trainer_service_id = int(trainer_service_id)
     date = request.args.get('date')
-    if date is not None:
-        date = datetime.strptime(date, '%Y-%m-%d').strftime('%d.%m.%Y')
+    # if date is not None:
+    #    date = datetime.strptime(date, '%Y-%m-%d').strftime('%d.%m.%Y')
     available_time_slots = hndl.get_available_time_slots(user_id, trainer_service_id, date)
     if available_time_slots is None:
         return jsonify({'message': 'Cannot find available time slots'}), 201

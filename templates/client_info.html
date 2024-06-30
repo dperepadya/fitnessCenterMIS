@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <h1>Client Information</h1>
@@ -13,5 +14,8 @@
     <p><strong>Email:</strong> {{ user.email }}</p>
     <p><strong>Funds:</strong> {{ user.funds }}</p>
     <p><strong>Fitness center ID:</strong> {{ user.fitness_center_id }}</p>
+    <a href="/user/orders"><button>Reservations</button></a>
+    <a href="user/edit"><button>Edit</button></a>
+    <a href="/"><button>Home</button></a>
 </body>
 </html>

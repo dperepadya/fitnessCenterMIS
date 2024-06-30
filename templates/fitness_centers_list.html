@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Fitness centers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <h1>Fitness centers List</h1>
@@ -19,8 +20,7 @@
         <tbody>
             {% for row in fitness_centers %}
             <tr>
-                <td><a href="{{ url_for('get_fitness_center_info', fc_id=row.id) }}">{{ row.id }}</a>></td>
-                <td>{{ row.id }}</td>
+                <td><a href="/fitness_center/{{ row.id }}">{{ row.id }}</a></td>
                 <td>{{ row.name }}</td>
                 <td>{{ row.address }}</td>
                 <td>{{ row.phone }}</td>
@@ -29,5 +29,10 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if is_admin %}
+        <a href="/fitness_center/add"><button>Add</button></a>
+        <a href="/fitness_center/delete"><button>Delete</button></a>
+    {% endif %}
+    <a href="/"><button>Home</button></a>
 </body>
 </html>

@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Fitness centers List</h1>
-    <table border="1">
+    <h1>Delete a Fitness Center</h1>
+    <p>Enter the ID of the Fitness Center to be deleted:</p>
+    <table>
         <tr>
             <th>ID</th>
             <th>Name</th>
@@ -21,14 +23,14 @@
             <td>{{ fc.address }}</td>
             <td>{{ fc.phone }}</td>
             <td>{{ fc.email }}</td>
+            <td>
+                <form action="/fitness_center/delete" method="post" style="display:inline;">
+                    <input type="hidden" name="fc_id" value="{{ fc.id }}">
+                    <input type="submit" value="Delete">
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </table>
-    <h2>Delete a Fitness Center</h2>
-    <form action="/fitness_center/delete" method="post">
-        <label for="fc_id">Enter the ID of the Fitness Center to be deleted:</label>
-        <input type="number" id="fc_id" name="fc_id" required>
-        <input type="submit" value="Delete">
-    </form>
 </body>
 </html>

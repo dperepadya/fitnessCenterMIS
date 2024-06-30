@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <h1>Services List</h1>
     <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    {% if trainer_id >=0 %}
+        <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
+    {% endif %}
     <table>
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Duration</th>
                 <th>Price</th>
@@ -20,6 +25,7 @@
         <tbody>
             {% for row in services %}
                 <tr>
+                    <td><a href="/fitness_center/{{ fc_id }}/services/{{ row.id }}">{{ row.id }}</a></td>
                     <td>{{ row.name }}</td>
                     <td>{{ row.duration }}</td>
                     <td>{{ row.price }}</td>
@@ -29,5 +35,9 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if is_admin %}
+        <a href="/fitness_center/{{ fc_id }}/services/add"><button>Add</button></a>
+    {% endif %}
+    <a href="/"><button>Home</button></a>
 </body>
 </html>

@@ -3,12 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <h1>Trainer Information</h1>
+    <p><strong>Name:</strong> {{ trainer.id }}</p>
     <p><strong>Name:</strong> {{ trainer.name }}</p>
     <p><strong>Age:</strong> {{ trainer.age }}</p>
     <p><strong>Gender:</strong> {{ trainer.gender }}</p>
-    <p><strong>Fitness center ID:</strong> {{ trainer.fc_id }}</p>
+    <p><strong>Fitness center ID:</strong> {{ trainer.fitness_center_id }}</p>
+    <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/rating"><button>Reviews</button></a>
+    <a href="/"><button>Home</button></a>
+    {% if is_admin %}
+        <a href="/fitness_center/{{ fc.id }}/trainers/{{ trainer.id }}/edit"><button>Edit</button></a>
+        <a href="/fitness_center/{{ fc.id }}/trainers/{{ trainer.id }}/delete"><button>Delete</button></a>
+    {% endif %}
 </body>
 </html>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <h1>Trainer Schedule</h1>
@@ -11,6 +12,7 @@
     <table>
         <thead>
             <tr>
+                <th>ID</th>
                 <th>Date</th>
                 <th>Start Time</th>
                 <th>End Time</th>
@@ -19,6 +21,7 @@
         <tbody>
             {% for row in schedules %}
                 <tr>
+                    <td><a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule/{{ row.id }}">{{ row.id }}</a></td>
                     <td>{{ row.date }}</td>
                     <td>{{ row.start_time }}</td>
                     <td>{{ row.end_time }}</td>
@@ -26,5 +29,10 @@
             {% endfor %}
         </tbody>
     </table>
+    {% if is_admin %}
+        <a href="/fitness_center/{{ fc_id }}/trainers{{ trainer_id }}/schedule/add"><button>Add</button></a>
+    {% endif %}
+    <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}"><button>Back</button></a>
+    <a href="/"><button>Home</button></a>
 </body>
 </html>

@@ -7,7 +7,7 @@ from database.database import Base
 class Review(Base):
     __tablename__ = 'reviews'
     id = Column(Integer, primary_key=True, autoincrement=True, unique=True, nullable=False)
-    date = Column(Date, nullable=False)
+    date = Column(String, nullable=False)
     grade = Column(Integer, nullable=False)
     comment = Column(String, nullable=True)
     client_id = Column(Integer, ForeignKey('clients.id'), nullable=False)

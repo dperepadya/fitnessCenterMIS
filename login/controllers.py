@@ -19,13 +19,13 @@ def login():
     password = login_data['password']
     user = hndl.authenticate(username, password)
     if user is None:
-        return redirect(url_for('login.get_login_form'))
+        return redirect("/login")
     session['user'] = user
-    msg = f"{user['name']}: Login successful"
-    # send_mail.delay(user['email'], msg)
-    print(user['email'], msg)
-    return jsonify({'message': msg}), 200
-
+    fc_id = user['fitness_center_id']
+    # msg = f"{user['name']}: Login successful"
+    # print(user['email'], msg)
+    # return jsonify({'message': msg}), 200
+    return redirect(f"/fitness_center/{fc_id}")
 
 
 
