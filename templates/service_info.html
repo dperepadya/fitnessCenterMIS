@@ -14,6 +14,9 @@
     <p><strong>Price:</strong> {{ service.price }}</p>
     <p><strong>Max attendees:</strong> {{ service.max_attendees }}</p>
     <p><strong>Fitness Center ID:</strong> {{ service.fitness_center_id }}</p>
+    {% if is_logged and trainer_id > 0 %}
+        <a href="/fitness_center/{{ trainer.fitness_center_id }}/services/{{ service.id }}"><button>Make Order</button></a>
+    {% endif %}
     <a href="/"><button>Home</button></a>
     {% if is_admin %}
         <a href="/fitness_center/{{ fc.id }}/services/{{ service.id }}/edit"><button>Edit</button></a>

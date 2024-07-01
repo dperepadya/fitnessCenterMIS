@@ -8,7 +8,7 @@
 <body>
     <h1>Trainer Schedule</h1>
     <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
-    <p><strong>Service ID:</strong> {{ trainer_id }}</p>
+    <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
     <table>
         <thead>
             <tr>
@@ -19,7 +19,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for row in schedules %}
+            {% for row in schedule %}
                 <tr>
                     <td><a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule/{{ row.id }}">{{ row.id }}</a></td>
                     <td>{{ row.date }}</td>
@@ -30,7 +30,7 @@
         </tbody>
     </table>
     {% if is_admin %}
-        <a href="/fitness_center/{{ fc_id }}/trainers{{ trainer_id }}/schedule/add"><button>Add</button></a>
+        <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule/add"><button>Add</button></a>
     {% endif %}
     <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}"><button>Back</button></a>
     <a href="/"><button>Home</button></a>

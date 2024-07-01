@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Trainer Schedule</h1>
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
+    <p><strong>ID:</strong> {{ schedule.id }}</p>
+    <p><strong>Date:</strong> {{ schedule.date}}</p>
+    <p><strong>Start time:</strong> {{ schedule.start_time }}</p>
+    <p><strong>End time:</strong> {{ schedule.and_time }}</p>
+
+    <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule"><button>Back</button></a>
+    <a href="/"><button>Home</button></a>
+    {% if is_admin %}
+         <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/schedule/{{ schedule.id }}/edit"><button>Edit</button></a>
+        <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/schedule/{{ schedule.id }}/delete"><button>Delete</button></a>
+    {% endif %}
+</body>
+</html>

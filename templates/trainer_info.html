@@ -12,11 +12,17 @@
     <p><strong>Age:</strong> {{ trainer.age }}</p>
     <p><strong>Gender:</strong> {{ trainer.gender }}</p>
     <p><strong>Fitness center ID:</strong> {{ trainer.fitness_center_id }}</p>
+
     <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/rating"><button>Reviews</button></a>
+    <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/schedule"><button>Schedule</button></a>
+    {% if is_logged and service_id > 0 %}
+        <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}"><button>Make Order</button></a>
+    {% endif %}
+
     <a href="/"><button>Home</button></a>
     {% if is_admin %}
-        <a href="/fitness_center/{{ fc.id }}/trainers/{{ trainer.id }}/edit"><button>Edit</button></a>
-        <a href="/fitness_center/{{ fc.id }}/trainers/{{ trainer.id }}/delete"><button>Delete</button></a>
+        <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/edit"><button>Edit</button></a>
+        <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/delete"><button>Delete</button></a>
     {% endif %}
 </body>
 </html>

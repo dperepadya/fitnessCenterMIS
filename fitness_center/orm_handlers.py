@@ -224,12 +224,29 @@ def modify_fitness_center_trainer_rating_in_db(fc_id, trainer_id):
 def get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id):
     try:
         params = db_session.query(Trainer.name.label('trainer_name'),
-                                                Schedule.date.label('date'),
-                                                Schedule.start_time.label('start_time'),
-                                                Schedule.end_time.label('end_time'))
+                                  Schedule.date.label('date'),
+                                  Schedule.start_time.label('start_time'),
+                                  Schedule.end_time.label('end_time'))
         fc_trainer_schedule = (params
                                .join(Schedule, Schedule.trainer_id == Trainer.id)
                                .filter(Trainer.fitness_center_id == fc_id, Trainer.id == trainer_id)
+                               .all())
+        return fc_trainer_schedule
+    except Exception as e:
+        print(f"Error fetching trainer schedule: {e}")
+        return None
+
+
+def get_fitness_center_trainer_schedule_item_from_db(fc_id, trainer_id, schedule_id):
+    try:
+        params = db_session.query(Trainer.name.label('trainer_name'),
+                                  Schedule.date.label('date'),
+                                  Schedule.start_time.label('start_time'),
+                                  Schedule.end_time.label('end_time'))
+        fc_trainer_schedule = (params
+                               .join(Schedule, Schedule.trainer_id == Trainer.id)
+                               .filter(Trainer.fitness_center_id == fc_id, Trainer.id == trainer_id,
+                                       Schedule.id == schedule_id)
                                .all())
         return fc_trainer_schedule
     except Exception as e:
@@ -292,10 +309,10 @@ def get_fitness_center_service_trainers_from_db(fc_id, serv_id):
 def get_fitness_center_trainer_services_from_db(fc_id, trainer_id):
     try:
         params = db_session.query(Service.name.label('name'),
-                                             Service.duration.label('duration'),
-                                             Service.price.label('price'),
-                                             Service.description.label('description'),
-                                             Service.max_attendees.label('max_attendees'))
+                                  Service.duration.label('duration'),
+                                  Service.price.label('price'),
+                                  Service.description.label('description'),
+                                  Service.max_attendees.label('max_attendees'))
         fc_trainer_servs = (params
                             .join(TrainerService, TrainerService.service_id == Service.id)
                             .join(Trainer, TrainerService.trainer_id == Trainer.id)

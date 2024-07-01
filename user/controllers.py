@@ -1,6 +1,6 @@
 # from datetime import datetime
 
-from flask import Blueprint, jsonify, request, session, render_template
+from flask import Blueprint, jsonify, request, session, render_template, redirect
 
 from models.order import Order
 from user import orm_handlers as hndl
@@ -55,7 +55,8 @@ def edit_user():
                 user_data['email'])
     user.id = user_id
     if hndl.update_user_in_db(user):
-        return jsonify({'message': 'User info updated successfully'}), 201
+        # return jsonify({'message': 'User info updated successfully'}), 201
+        return redirect(f'/user')
     else:
         return jsonify({'message': 'Cannot update user'}), 404
 
@@ -164,10 +165,14 @@ def delete_user_order(ord_id):
 @user_bp.get('/orders/add')
 @check_user_login
 def select_trainer_service_form():
-    trainer_services = hndl.get_trainer_services_list()
-    if trainer_services is None:
-        return jsonify({'message': f'Cannot get trainers & services info'}), 404
-    return render_template('trainer_service_select.html', trainer_services=trainer_services)
+    # trainer_services = hndl.get_trainer_services_list()
+    # return render_template('trainer_service_select.html', trainer_services=trainer_services)
+    user = session.get('user')
+    fc_id = user['fitness_center_id']
+    if fc_id is None:
+        return jsonify({'message': f'Cannot get User fitness center info'}), 404
+        # return render_template('services_list.html', trainer_services=trainer_services)
+    return redirect(f'/fitness_center/{fc_id}/services')
 
 # 2nd endpoint: Select a date of desired reservation
 # It's being called from "Trainer & Service" form
@@ -178,6 +183,7 @@ def select_trainer_service_form():
 def select_date():
     trainer_service_id = request.args.get('trainer_service_id')
     return render_template('select_date.html', trainer_service_id=trainer_service_id)
+
 
 # 3d endpoint: Select a time slot (start time) of desired reservation
 # It's being called from "Select Date" form
