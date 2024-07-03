@@ -7,9 +7,10 @@
 </head>
 <body>
     <h1>Select Time</h1>
-    <form action="/user/orders/add" method="post">
-        <input type="hidden" name="trainer_service_id" value="{{ trainer_service_id }}">
-        <input type="hidden" name="date" value="{{ date }}">
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    <p><strong>Service ID:</strong> {{ service_id }}</p>
+    <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
+    <form action="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/services/{{ srvice_id }}/order" method="post">
         <label for="time">Available Time Slots:</label>
         <select name="time" id="time" required>
             {% for slot in available_time_slots %}

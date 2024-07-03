@@ -25,7 +25,11 @@
         <tbody>
             {% for row in services %}
                 <tr>
-                    <td><a href="/fitness_center/{{ fc_id }}/services/{{ row.id }}">{{ row.id }}</a></td>
+                    {% if is_admin and trainer_id >=0 and assign %}
+                        <td><a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/services/{{ row.id }}/add">{{ row.id }}</a></td>
+                    {% else %}
+                        <td><a href="/fitness_center/{{ fc_id }}/services/{{ row.id }}">{{ row.id }}</a></td>
+                    {% endif %}
                     <td>{{ row.name }}</td>
                     <td>{{ row.duration }}</td>
                     <td>{{ row.price }}</td>
@@ -38,6 +42,7 @@
     {% if is_admin %}
         <a href="/fitness_center/{{ fc_id }}/services/add"><button>Add</button></a>
     {% endif %}
+    <a href="/fitness_center/{{ fc_id }}"><button>Fitness center</button></a>
     <a href="/"><button>Home</button></a>
 </body>
 </html>

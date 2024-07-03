@@ -28,6 +28,10 @@
             {% endfor %}
         </tbody>
     </table>
-
+    {% if is_logged %}
+        <a href="/user/orders/add"><button>New Order</button></a>
+    {% endif %}
+    <a href="/user"><button>Back</button></a>
+    <a href="/"><button>Home</button></a>
 </body>
 </html>

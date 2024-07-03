@@ -17,11 +17,11 @@
     <p><strong>Email:</strong> {{ fc.email }}</p>
     <a href="/fitness_center/{{ fc.id }}/services"><button>Services</button></a>
     <a href="/fitness_center/{{ fc.id }}/trainers"><button>Trainers</button></a>
-    <a href="/fitness_center"><button>Fitness centers</button></a>
-    <a href="/"><button>Home</button></a>
     {% if is_admin %}
         <a href="/fitness_center/{{ fc.id }}/edit"><button>Edit</button></a>
         <a href="/fitness_center/{{ fc.id }}/delete"><button>Delete</button></a>
     {% endif %}
+    <a href="/fitness_center"><button>Fitness centers</button></a>
+    <a href="/"><button>Home</button></a>
 </body>
 </html>

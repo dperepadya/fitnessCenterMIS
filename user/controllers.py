@@ -102,7 +102,8 @@ def add_user_funds():
     current_funds = user_info['funds']
     new_funds = current_funds + amount
     if hndl.update_user_funds_in_db(user_id, new_funds):
-        return jsonify({'message': f'User funds updated successfully. The balance {new_funds}'}), 201
+        # return jsonify({'message': f'User funds updated successfully. The balance {new_funds}'}), 201
+        return redirect('/user/funds')
     else:
         return jsonify({'message': 'Cannot update user funds'}), 404
 
@@ -137,7 +138,7 @@ def get_user_order(ord_id):
 
 @user_bp.get('/orders/delete')
 @check_user_login
-def get_delete_user_order_form(ord_id):
+def get_delete_user_order_form():
     user = session.get('user')  # User is defined after Login
     user_id = user['id']
     orders = hndl.get_user_orders_from_db(user_id)
@@ -148,12 +149,21 @@ def get_delete_user_order_form(ord_id):
 
 @user_bp.post('/orders/delete')
 @check_user_login
-def delete_user_order(ord_id):
+def delete_user_order():
     orders_data = request.form
     order_id = orders_data['order_id']
     # user = session.get('user')  # User is defined after Login
     # user_id = user['id']
     if hndl.delete_user_order_from_db(order_id):
+        return jsonify({'message': 'Order removed successfully'}), 201
+    else:
+        return jsonify({'message': 'Cannot delete the Order'}), 404
+
+
+@user_bp.post('/orders/<int:order_id>/delete')
+@check_user_login
+def delete_user_order_by_id(ord_id):
+    if hndl.delete_user_order_from_db(ord_id):
         return jsonify({'message': 'Order removed successfully'}), 201
     else:
         return jsonify({'message': 'Cannot delete the Order'}), 404
@@ -164,7 +174,7 @@ def delete_user_order(ord_id):
 
 @user_bp.get('/orders/add')
 @check_user_login
-def select_trainer_service_form():
+def add_user_order():
     # trainer_services = hndl.get_trainer_services_list()
     # return render_template('trainer_service_select.html', trainer_services=trainer_services)
     user = session.get('user')
@@ -174,6 +184,7 @@ def select_trainer_service_form():
         # return render_template('services_list.html', trainer_services=trainer_services)
     return redirect(f'/fitness_center/{fc_id}/services')
 
+
 # 2nd endpoint: Select a date of desired reservation
 # It's being called from "Trainer & Service" form
 # Outputs: trainer_service id
@@ -182,7 +193,7 @@ def select_trainer_service_form():
 @user_bp.get('/select_date')
 def select_date():
     trainer_service_id = request.args.get('trainer_service_id')
-    return render_template('select_date.html', trainer_service_id=trainer_service_id)
+    return render_template('select_order_date.html', trainer_service_id=trainer_service_id)
 
 
 # 3d endpoint: Select a time slot (start time) of desired reservation
@@ -202,7 +213,7 @@ def select_time():
     available_time_slots = hndl.get_available_time_slots(user_id, trainer_service_id, date)
     if available_time_slots is None:
         return jsonify({'message': 'Cannot find available time slots'}), 201
-    return render_template('select_time.html', trainer_service_id=trainer_service_id, date=date,
+    return render_template('select_order_time.html', trainer_service_id=trainer_service_id, date=date,
                            available_time_slots=available_time_slots)
 
 

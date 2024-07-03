@@ -1,14 +1,15 @@
 # from datetime import datetime
 
 from flask import Blueprint, jsonify, request, session, render_template, redirect
-
 from fitness_center import orm_handlers as hndl
+from models.order import Order
 from models.fitness_center import FitnessCenter
 from models.review import Review
 from models.schedule import Schedule
 from models.service import Service
 from models.trainer import Trainer
 from utils.login_decorator import check_user_login, check_admin_rights, user_is_admin, user_is_logged_in
+from utils.time_slots import get_available_time_slots
 
 fitness_center_bp = Blueprint('fitness_center', __name__)
 
@@ -309,7 +310,7 @@ def get_fitness_center_service_trainers(fc_id, service_id):
     return render_template('trainers_list.html', trainers=fc_trainers, fc_id=fc_id,
                            service_id=service_id, is_admin=user_is_admin())
 
-
+'''
 @fitness_center_bp.get('/<int:fc_id>/services/<int:serv_id>/trainers/<int:trainer_id>')
 # @check_user_login
 def get_fitness_center_service_trainer(fc_id, service_id, trainer_id):
@@ -322,7 +323,7 @@ def get_fitness_center_service_trainer(fc_id, service_id, trainer_id):
     # return jsonify({'message': f"{user_name} fitness center {fc_id} trainers: {fc_trainers_str}"}), 200
     return render_template('trainer_info.html', trainer=fc_trainer, service_id=service_id,
                            is_admin=user_is_admin())
-
+'''
 
 # Get Fitness Center Trainer Services ======================================
 
@@ -344,10 +345,11 @@ def get_fitness_center_trainer_services(fc_id, trainer_id):
 # Assign Fitness Center Service to Trainer ======================================
 
 
-@fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/services/add')
+@fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>/add')
 @check_admin_rights
-def get_add_fitness_center_trainer_service_form(fc_id, trainer_id):
-    return render_template('trainer_service_assign.html', fc_id=fc_id, trainer_id=trainer_id)
+def get_add_fitness_center_trainer_service_form(fc_id, trainer_id, service_id):
+    return render_template('trainer_service_assign.html',
+                           fc_id=fc_id, trainer_id=trainer_id, service_id=service_id)
 
 
 @fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/services/add')
@@ -361,6 +363,81 @@ def add_fitness_center_service_trainer(fc_id, trainer_id):
         redirect(f"/fitness_center/{fc_id}/trainers/{trainer_id}/services")
     else:
         return jsonify({'message': 'Cannot assign the Service to the Trainer'}), 404
+
+
+@fitness_center_bp.get('/<int:fc_id>/services/<int:service_id>/trainers/add')
+@check_admin_rights
+def get_add_fitness_center_trainer_service_form(fc_id, trainer_id):
+    return render_template('trainer_service_assign.html', fc_id=fc_id, trainer_id=trainer_id)
+
+
+# 1st Order endpoint: Select a date of desired reservation
+# It's being called from "Trainer" or "Service" form
+# Outputs: trainer_id, service_id, capacity
+
+@fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>/order')
+def select_date(fc_id, service_id, trainer_id):
+    # trainer_service_id = hndl.get_fitness_center_service_trainer_from_db(fc_id, service_id, trainer_id)
+    return render_template('select_order_date.html', fc_id=fc_id, service_id=service_id,
+                           trainer_id=service_id)
+
+
+# 2nd Order endpoint: Select a time slot (start time) of desired reservation
+# It's being called from "Select Date" form
+# Outputs: date, trainer_service_id
+
+
+@fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>/select_time')
+def select_time(fc_id, trainer_id, service_id):
+    user = session.get('user')  # User is defined after Login
+    user_id = user['id']
+    # service_id = request.args.get('service_id')
+    # service_id = int(service_id)
+    # trainer_id = request.args.get('trainer_id')
+    # trainer_id = int(trainer_id)
+    date = request.args.get('date')
+    # if date is not None:
+    #    date = datetime.strptime(date, '%Y-%m-%d').strftime('%d.%m.%Y')
+    available_time_slots = get_available_time_slots(user_id, trainer_id, service_id, date)
+    if available_time_slots is None:
+        return jsonify({'message': 'Cannot find available time slots'}), 201
+    return render_template('select_order_time.html', available_time_slots=available_time_slots,
+                           fc_id=fc_id, service_id=service_id, trainer_id=service_id, date=date)
+
+
+@fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>/order')
+@check_user_login
+def add_user_order():
+    # trainer_services = hndl.get_trainer_services_list()
+    # return render_template('trainer_service_select.html', trainer_services=trainer_services)
+    user = session.get('user')
+    fc_id = user['fitness_center_id']
+    if fc_id is None:
+        return jsonify({'message': f'Cannot get User fitness center info'}), 404
+        # return render_template('services_list.html', trainer_services=trainer_services)
+    return redirect(f'/fitness_center/{fc_id}/services')
+
+
+@fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>/order')
+def add_order(fc_id, trainer_id, service_id):
+    user_id = session['user']['client_id']
+    # trainer_service_id = request.form['trainer_service_id']
+    date = request.form['date']
+    time = request.form['time']
+    # trainer_service = hndl.get_trainer_service(trainer_service_id)
+    # if trainer_service is None:
+    #     return None
+    # trainer_id = trainer_service['trainer_id']
+    # service_id = trainer_service['service_id']
+
+    order = Order(date, time, user_id, trainer_id, service_id)
+    if hndl.add_user_order_to_db(order):
+        return jsonify({'message': 'Order added successfully'}), 201
+    else:
+        return jsonify({'message': 'Failed to add order'}), 500
+
+
+
 
 
 # Trainer rating #############################################

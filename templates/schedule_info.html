@@ -13,12 +13,11 @@
     <p><strong>Date:</strong> {{ schedule.date}}</p>
     <p><strong>Start time:</strong> {{ schedule.start_time }}</p>
     <p><strong>End time:</strong> {{ schedule.and_time }}</p>
-
-    <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule"><button>Back</button></a>
-    <a href="/"><button>Home</button></a>
     {% if is_admin %}
          <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/schedule/{{ schedule.id }}/edit"><button>Edit</button></a>
         <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/schedule/{{ schedule.id }}/delete"><button>Delete</button></a>
     {% endif %}
+    <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule"><button>Back</button></a>
+    <a href="/"><button>Home</button></a>
 </body>
 </html>

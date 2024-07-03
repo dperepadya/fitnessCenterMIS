@@ -347,6 +347,29 @@ def get_fitness_center_service_trainer_from_db(fc_id, serv_id, trainer_id):
         return None
 
 
+'''
+def get_fitness_center_service_trainer_from_db(fc_id, serv_id, trainer_id):
+    try:
+        params = db_session.query(Trainer.name.label('id'),
+                                  Trainer.name.label('name'),
+                                  Trainer.age.label('age'),
+                                  Trainer.gender.label('gender'),
+                                  Trainer.fitness_center_id.label('fc_id'),
+                                  Service.id.label('service_id'))
+        fc_serv_trainer = (params
+                           .join(TrainerService, TrainerService.service_id == Service.id)
+                           .join(Trainer, TrainerService.trainer_id == Trainer.id)
+                           .filter(Service.id == serv_id, Trainer.id == trainer_id,
+                                   Trainer.fitness_center_id == fc_id,
+                                   Service.fitness_center_id == fc_id)
+                           .first())
+        return fc_serv_trainer
+    except Exception as e:
+        print(f"Error fetching service trainers from db: {e}")
+        return None
+'''
+
+
 def add_fitness_center_trainer_and_service_to_db(trainer_id, service_id, capacity):
     try:
         trainer_service = TrainerService(trainer_id=trainer_id, service_id=service_id,
