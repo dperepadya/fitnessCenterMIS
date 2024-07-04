@@ -1,4 +1,5 @@
 from flask import g
+from sqlalchemy.orm import aliased
 
 from database.database import db_session
 from db_models.client import Client
@@ -288,17 +289,22 @@ def delete_fitness_center_trainer_schedule_from_db(trainer_id, schedule_id):
         return False
 
 
-def get_fitness_center_service_trainers_from_db(fc_id, serv_id):
+def get_fitness_center_service_trainers_from_db(fc_id, service_id):
     try:
-        params = db_session.query(Trainer.name.label('name'),
-                                  Trainer.age.label('age'),
-                                  Trainer.gender.label('gender'))
+        trainer_alias = aliased(Trainer, name='trainer_alias')
+        service_alias = aliased(Service, name='service_alias')
+
+        params = db_session.query(trainer_alias.id.label('id'),
+                                  trainer_alias.name.label('name'),
+                                  trainer_alias.age.label('age'),
+                                  trainer_alias.gender.label('gender'),
+                                  trainer_alias.fitness_center_id.label('fitness_center_id'))
         fc_serv_trainers = (params
-                            .join(TrainerService, TrainerService.service_id == Service.id)
-                            .join(Trainer, TrainerService.trainer_id == Trainer.id)
-                            .filter(Service.id == serv_id,
-                                    Trainer.fitness_center_id == fc_id,
-                                    Service.fitness_center_id == fc_id)
+                            .join(TrainerService, TrainerService.trainer_id == trainer_alias.id)
+                            .join(service_alias, TrainerService.service_id == service_alias.id)
+                            .filter(service_alias.id == service_id,
+                                    trainer_alias.fitness_center_id == fc_id,
+                                    service_alias.fitness_center_id == fc_id)
                             .all())
         return fc_serv_trainers
     except Exception as e:
@@ -306,19 +312,47 @@ def get_fitness_center_service_trainers_from_db(fc_id, serv_id):
         return None
 
 
+def get_fitness_center_service_trainer_from_db(fc_id, service_id, trainer_id):
+    try:
+        trainer_alias = aliased(Trainer, name='trainer_alias')
+        service_alias = aliased(Service, name='service_alias')
+        params = db_session.query(trainer_alias.id.label('id'),
+                                  trainer_alias.name.label('name'),
+                                  trainer_alias.age.label('age'),
+                                  trainer_alias.gender.label('gender'),
+                                  trainer_alias.fitness_center_id.label('fitness_center_id'),
+                                  service_alias.id.label('service_id'))
+        fc_serv_trainer = (params
+                           .join(TrainerService, TrainerService.service_id == service_alias.id)
+                           .join(trainer_alias, TrainerService.trainer_id == trainer_alias.id)
+                           .filter(service_alias.id == service_id, trainer_alias.id == trainer_id,
+                                   trainer_alias.fitness_center_id == fc_id,
+                                   service_alias.fitness_center_id == fc_id)
+                           .first())
+        return fc_serv_trainer
+    except Exception as e:
+        print(f"Error fetching service trainers from db: {e}")
+        return None
+
+
 def get_fitness_center_trainer_services_from_db(fc_id, trainer_id):
     try:
-        params = db_session.query(Service.name.label('name'),
-                                  Service.duration.label('duration'),
-                                  Service.price.label('price'),
-                                  Service.description.label('description'),
-                                  Service.max_attendees.label('max_attendees'))
+        service_alias = aliased(Service, name='service_alias')
+        trainer_alias = aliased(Trainer, name='trainer_alias')
+
+        params = db_session.query(service_alias.id.label('id'),
+                                  service_alias.name.label('name'),
+                                  service_alias.duration.label('duration'),
+                                  service_alias.price.label('price'),
+                                  service_alias.description.label('description'),
+                                  service_alias.max_attendees.label('max_attendees'),
+                                  service_alias.fitness_center_id.label('fitness_center_id'))
         fc_trainer_servs = (params
-                            .join(TrainerService, TrainerService.service_id == Service.id)
-                            .join(Trainer, TrainerService.trainer_id == Trainer.id)
-                            .filter(Trainer.id == trainer_id,
-                                    Trainer.fitness_center_id == fc_id,
-                                    Service.fitness_center_id == fc_id)
+                            .join(TrainerService, TrainerService.service_id == service_alias.id)
+                            .join(trainer_alias, TrainerService.trainer_id == trainer_alias.id)
+                            .filter(trainer_alias.id == trainer_id,
+                                    trainer_alias.fitness_center_id == fc_id,
+                                    service_alias.fitness_center_id == fc_id)
                             .all())
         return fc_trainer_servs
     except Exception as e:
@@ -326,48 +360,29 @@ def get_fitness_center_trainer_services_from_db(fc_id, trainer_id):
         return None
 
 
-def get_fitness_center_service_trainer_from_db(fc_id, serv_id, trainer_id):
+def get_fitness_center_trainer_service_from_db(fc_id, trainer_id, service_id):
     try:
-        params = db_session.query(Trainer.name.label('id'),
-                                  Trainer.name.label('name'),
-                                  Trainer.age.label('age'),
-                                  Trainer.gender.label('gender'),
-                                  Trainer.fitness_center_id.label('fc_id'),
-                                  Service.id.label('service_id'))
-        fc_serv_trainer = (params
-                           .join(TrainerService, TrainerService.service_id == Service.id)
-                           .join(Trainer, TrainerService.trainer_id == Trainer.id)
-                           .filter(Service.id == serv_id, Trainer.id == trainer_id,
-                                   Trainer.fitness_center_id == fc_id,
-                                   Service.fitness_center_id == fc_id)
-                           .first())
-        return fc_serv_trainer
+        service_alias = aliased(Service, name='service_alias')
+        trainer_alias = aliased(Trainer, name='trainer_alias')
+
+        params = db_session.query(service_alias.id.label('id'),
+                                  service_alias.name.label('name'),
+                                  service_alias.duration.label('duration'),
+                                  service_alias.price.label('price'),
+                                  service_alias.description.label('description'),
+                                  service_alias.max_attendees.label('max_attendees'),
+                                  service_alias.fitness_center_id.label('fitness_center_id'))
+        fc_trainer_servs = (params
+                            .join(TrainerService, TrainerService.service_id == service_alias.id)
+                            .join(trainer_alias, TrainerService.trainer_id == trainer_alias.id)
+                            .filter(trainer_alias.id == trainer_id, service_alias.id == service_id,
+                                    trainer_alias.fitness_center_id == fc_id,
+                                    service_alias.fitness_center_id == fc_id)
+                            .first())
+        return fc_trainer_servs
     except Exception as e:
         print(f"Error fetching service trainers from db: {e}")
         return None
-
-
-'''
-def get_fitness_center_service_trainer_from_db(fc_id, serv_id, trainer_id):
-    try:
-        params = db_session.query(Trainer.name.label('id'),
-                                  Trainer.name.label('name'),
-                                  Trainer.age.label('age'),
-                                  Trainer.gender.label('gender'),
-                                  Trainer.fitness_center_id.label('fc_id'),
-                                  Service.id.label('service_id'))
-        fc_serv_trainer = (params
-                           .join(TrainerService, TrainerService.service_id == Service.id)
-                           .join(Trainer, TrainerService.trainer_id == Trainer.id)
-                           .filter(Service.id == serv_id, Trainer.id == trainer_id,
-                                   Trainer.fitness_center_id == fc_id,
-                                   Service.fitness_center_id == fc_id)
-                           .first())
-        return fc_serv_trainer
-    except Exception as e:
-        print(f"Error fetching service trainers from db: {e}")
-        return None
-'''
 
 
 def add_fitness_center_trainer_and_service_to_db(trainer_id, service_id, capacity):

@@ -147,7 +147,8 @@ def get_fitness_center_service_info(fc_id, serv_id):
     # user = session.get('user')
     # user_name = user['client_name']
     # return jsonify({'message': f"{user_name} fitness center {fc_id} service {serv_id}: {fc_service_str}"}), 200
-    return render_template('service_info.html', service=fc_service, is_admin=user_is_admin())
+    return render_template('service_info.html', service=fc_service,
+                           trainer_id=-1, is_logged=user_is_logged_in(), is_admin=user_is_admin())
 
 
 # Add Fitness Center Services ======================================
@@ -236,7 +237,8 @@ def get_fitness_center_trainer_info(fc_id, trainer_id):
     # user_name = user['client_name']
     # return jsonify({'message': f"{user_name} fitness center {fc_id} trainer {trainer_id}:"
     #                            f" {fc_trainer_str}"}), 200
-    return render_template('trainer_info.html', trainer=fc_trainer, is_admin=user_is_admin())
+    return render_template('trainer_info.html', trainer=fc_trainer, service_id=-1,
+                           is_logged=user_is_logged_in(), is_admin=user_is_admin())
 
 
 # Add Fitness Center Trainers ======================================
@@ -297,7 +299,7 @@ def delete_fitness_center_trainer_by_id(fc_id, trainer_id):
 # Get Fitness Center Service Trainers ======================================
 
 
-@fitness_center_bp.get('/<int:fc_id>/services/<int:serv_id>/trainers')
+@fitness_center_bp.get('/<int:fc_id>/services/<int:service_id>/trainers')
 # @check_user_login
 def get_fitness_center_service_trainers(fc_id, service_id):
     fc_trainers = hndl.get_fitness_center_service_trainers_from_db(fc_id, service_id)
@@ -310,8 +312,8 @@ def get_fitness_center_service_trainers(fc_id, service_id):
     return render_template('trainers_list.html', trainers=fc_trainers, fc_id=fc_id,
                            service_id=service_id, is_admin=user_is_admin())
 
-'''
-@fitness_center_bp.get('/<int:fc_id>/services/<int:serv_id>/trainers/<int:trainer_id>')
+
+@fitness_center_bp.get('/<int:fc_id>/services/<int:service_id>/trainers/<int:trainer_id>')
 # @check_user_login
 def get_fitness_center_service_trainer(fc_id, service_id, trainer_id):
     fc_trainer = hndl.get_fitness_center_service_trainer_from_db(fc_id, service_id, trainer_id)
@@ -322,8 +324,8 @@ def get_fitness_center_service_trainer(fc_id, service_id, trainer_id):
     # user_name = user['client_name']
     # return jsonify({'message': f"{user_name} fitness center {fc_id} trainers: {fc_trainers_str}"}), 200
     return render_template('trainer_info.html', trainer=fc_trainer, service_id=service_id,
-                           is_admin=user_is_admin())
-'''
+                           is_logged=user_is_logged_in(), is_admin=user_is_admin())
+
 
 # Get Fitness Center Trainer Services ======================================
 
@@ -331,16 +333,29 @@ def get_fitness_center_service_trainer(fc_id, service_id, trainer_id):
 @fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/services')
 # @check_user_login
 def get_fitness_center_trainer_services(fc_id, trainer_id):
-    fc_trainers = hndl.get_fitness_center_trainer_services_from_db(fc_id, trainer_id)
-    if fc_trainers is None:
+    fc_services = hndl.get_fitness_center_trainer_services_from_db(fc_id, trainer_id)
+    if fc_services is None:
         return jsonify({'message': 'Fitness center trainers list is empty'}), 404
     # fc_trainers_str = Converter.convert_to_string(fc_trainers)
     # user = session.get('user')
     # user_name = user['client_name']
     # return jsonify({'message': f"{user_name} fitness center {fc_id} trainers: {fc_trainers_str}"}), 200
-    return render_template('services_list.html', trainers=fc_trainers, fc_id=fc_id,
+    return render_template('services_list.html', services=fc_services, fc_id=fc_id,
                            trainer_id=trainer_id, is_admin=user_is_admin())
 
+
+@fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>')
+# @check_user_login
+def get_fitness_center_trainer_service(fc_id, trainer_id, service_id):
+    fc_trainer = hndl.get_fitness_center_trainer_service_from_db(fc_id, service_id, trainer_id)
+    if fc_trainer is None:
+        return jsonify({'message': f'Cannot find Service {service_id} Trainer {trainer_id}'}), 404
+    # fc_trainers_str = Converter.convert_to_string(fc_trainers)
+    # user = session.get('user')
+    # user_name = user['client_name']
+    # return jsonify({'message': f"{user_name} fitness center {fc_id} trainers: {fc_trainers_str}"}), 200
+    return render_template('trainer_info.html', trainer=fc_trainer, service_id=service_id,
+                           is_logged=user_is_logged_in(), is_admin=user_is_admin())
 
 # Assign Fitness Center Service to Trainer ======================================
 
@@ -364,16 +379,11 @@ def add_fitness_center_service_trainer(fc_id, trainer_id):
     else:
         return jsonify({'message': 'Cannot assign the Service to the Trainer'}), 404
 
-
-@fitness_center_bp.get('/<int:fc_id>/services/<int:service_id>/trainers/add')
-@check_admin_rights
-def get_add_fitness_center_trainer_service_form(fc_id, trainer_id):
-    return render_template('trainer_service_assign.html', fc_id=fc_id, trainer_id=trainer_id)
-
-
+# Order (Reservation)
 # 1st Order endpoint: Select a date of desired reservation
 # It's being called from "Trainer" or "Service" form
 # Outputs: trainer_id, service_id, capacity
+
 
 @fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>/order')
 def select_date(fc_id, service_id, trainer_id):

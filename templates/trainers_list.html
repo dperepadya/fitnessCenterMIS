@@ -23,7 +23,11 @@
         <tbody>
             {% for row in trainers %}
                 <tr>
-                    <td><a href="/fitness_center/{{ fc_id }}/trainers/{{ row.id }}">{{ row.id }}</a></td>
+                    {% if service_id >=0 %}
+                        <td><a href="/fitness_center/{{ fc_id }}/services/{{ service_id }}/trainers/{{ row.id }}">{{ row.id }}</a></td>
+                    {% else %}
+                        <td><a href="/fitness_center/{{ fc_id }}/trainers/{{ row.id }}">{{ row.id }}</a></td>
+                    {% endif %}
                     <td>{{ row.name }}</td>
                     <td>{{ row.age }}</td>
                     <td>{{ row.gender }}</td>
