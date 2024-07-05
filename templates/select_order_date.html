@@ -10,10 +10,11 @@
     <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
     <p><strong>Service ID:</strong> {{ service_id }}</p>
     <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
-    <form action="/fitness_center/{{ fc_id }}/services/{{ service_id }}/trainers/{{ trainer.id }}/select_time" method="get">
+    <form action="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/services/{{ service_id }}/select_time" method="get">
         <label for="date">Date:</label>
         <input type="date" id="date" name="date" required>
         <input type="submit" value="Next">
     </form>
+    <a href="/"><button>Home</button></a>
 </body>
 </html>

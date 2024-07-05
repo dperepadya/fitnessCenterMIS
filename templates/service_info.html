@@ -18,11 +18,11 @@
     <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
     <a href="/fitness_center/{{ service.fitness_center_id }}/services/{{service.id}}/trainers"><button>Service Trainers</button></a>
     {% if is_logged and trainer_id > 0 %}
-        <a href="/fitness_center/{{ service.fitness_center_id }}/services/{{ service.id }}/trainers/{{ trainer_id }}/order"><button>Order</button></a>
+        <a href="/fitness_center/{{ service.fitness_center_id }}/trainers/{{ trainer_id }}/services/{{ service.id }}/order"><button>Order</button></a>
     {% endif %}
     {% if is_admin %}
-        <a href="/fitness_center/{{ fc.id }}/services/{{ service.id }}/edit"><button>Edit</button></a>
-        <a href="/fitness_center/{{ fc.id }}/services/{{ service.id }}/delete"><button>Delete</button></a>
+        <a href="/fitness_center/{{ service.fitness_center_id }}/services/{{ service.id }}/edit"><button>Edit</button></a>
+        <a href="/fitness_center/{{ service.fitness_center_id }}/services/{{ service.id }}/delete"><button>Delete</button></a>
     {% endif %}
     {% if trainer_id >= 0 %}
         <a href="/fitness_center/{{ service.fitness_center_id }}/trainers/{{ service.id }}/services"><button>Back to Services</button></a>

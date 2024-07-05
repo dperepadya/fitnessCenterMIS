@@ -9,26 +9,30 @@
     <h1>Trainer Schedule</h1>
     <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
     <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in schedule %}
+    {% if not schedules %}
+        <p>No schedules found.</p>
+    {% else %}
+        <table>
+            <thead>
                 <tr>
-                    <td><a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule/{{ row.id }}">{{ row.id }}</a></td>
-                    <td>{{ row.date }}</td>
-                    <td>{{ row.start_time }}</td>
-                    <td>{{ row.end_time }}</td>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for row in schedule %}
+                    <tr>
+                        <td><a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule/{{ row.id }}">{{ row.id }}</a></td>
+                        <td>{{ row.date }}</td>
+                        <td>{{ row.start_time }}</td>
+                        <td>{{ row.end_time }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
     {% if is_admin %}
         <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/schedule/add"><button>Add</button></a>
     {% endif %}

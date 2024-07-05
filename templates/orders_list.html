@@ -8,30 +8,34 @@
 <body>
     <h1>Reservations List</h1>
     <p><strong>Client ID:</strong> {{ user_id }}</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Service</th>
-                <th>Trainer</th>
-                <th>Date</th>
-                <th>Time</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in orders %}
+    {% if not orders %}
+        <p>No orders found.</p>
+    {% else %}
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ row.service_name }}</td>
-                    <td>{{ row.trainer_name }}</td>
-                    <td>{{ row.date }}</td>
-                    <td>{{ row.time }}</td>
+                    <th>ID</th>
+                    <th>Service</th>
+                    <th>Trainer</th>
+                    <th>Date</th>
+                    <th>Time</th>
                 </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% if is_logged %}
-        <a href="/user/orders/add"><button>New Order</button></a>
+            </thead>
+            <tbody>
+                {% for row in orders %}
+                    <tr>
+                        <td><a href="/user/orders/{{ row.id }}">{{ row.id }}</a></td>
+                        <td>{{ row.service_name }}</td>
+                        <td>{{ row.trainer_name }}</td>
+                        <td>{{ row.date }}</td>
+                        <td>{{ row.time }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
-    <a href="/user"><button>Back</button></a>
+    <a href="/user/orders/add"><button>New Order</button></a>
+    <a href="/user"><button>User info</button></a>
     <a href="/"><button>Home</button></a>
 </body>
 </html>

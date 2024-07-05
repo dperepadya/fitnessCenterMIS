@@ -9,7 +9,7 @@ class TrainerService(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, unique=True, nullable=False)
     trainer_id = Column(Integer, ForeignKey('trainers.id'))
     service_id = Column(Integer, ForeignKey('services.id'))
-    capacity = Column(Integer)
+    capacity = Column(Integer, nullable=False)
 
     # Relationships
     trainer = relationship("Trainer", back_populates="trainer_service")

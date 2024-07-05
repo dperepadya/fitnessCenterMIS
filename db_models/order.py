@@ -7,8 +7,8 @@ from database.database import Base
 class Order(Base):
     __tablename__ = 'orders'
     id = Column(Integer, primary_key=True, autoincrement=True, unique=True, nullable=False)
-    date = Column(Date)
-    time = Column(Time)
+    date = Column(Date, nullable=False)
+    time = Column(Time, nullable=False)
     client_id = Column(Integer, ForeignKey('clients.id'))
     trainer_id = Column(Integer, ForeignKey('trainers.id'))
     service_id = Column(Integer, ForeignKey('services.id'))

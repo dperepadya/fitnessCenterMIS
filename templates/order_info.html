@@ -12,7 +12,10 @@
     <p><strong>Fitness center ID:</strong> {{ order.service_name }}</p>
     <p><strong>Fitness center ID:</strong> {{ order.trainer_name }}</p>
     <p><strong>Date:</strong> {{ order.date }}</p>
-    <a href="/user/orders"><button>Back</button></a>
+    {% if is_logged %}
+        <a href="/user/orders/{{ ord_id }}/delete"><button>Delete</button></a>
+    {% endif %}
+        <a href="/user/orders"><button>Back to Orders</button></a>
     <a href="/"><button>Home</button></a>
 </body>
 </html>

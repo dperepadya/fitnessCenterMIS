@@ -8,7 +8,7 @@ from db_models.review import Review
 from db_models.schedule import Schedule
 from db_models.service import Service
 from db_models.trainer import Trainer
-from db_models.trainer_services import TrainerService
+from db_models.trainer_service import TrainerService
 from mappers.fitness_center_mappers import fc_to_fcdb, existing_fc_to_fcdb
 from mappers.review_mappers import review_to_reviewdb
 from mappers.schedule_mappers import schedule_to_scheduledb

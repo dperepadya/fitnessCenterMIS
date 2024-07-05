@@ -18,7 +18,7 @@
     <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/schedule"><button>Schedule</button></a>
     <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{trainer.id}}/services"><button>Trainer Services</button></a>
     {% if is_logged and service_id > 0 %}
-        <a href="/fitness_center/{{ trainer.fitness_center_id }}/services/{{ service_id }}/trainers/{{ trainer.id }}/order"><button>Order</button></a>
+        <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/services/{{ service_id }}/order"><button>Order</button></a>
     {% endif %}
     {% if is_admin %}
         <a href="/fitness_center/{{ trainer.fitness_center_id }}/trainers/{{ trainer.id }}/edit"><button>Edit</button></a>

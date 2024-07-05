@@ -114,8 +114,9 @@ def get_user_orders():
     user = session.get('user')  # User is defined after Login
     user_id = user['id']
     orders = hndl.get_user_orders_from_db(user_id)
-    if orders is None:
-        return jsonify({'message': 'User orders list is empty'}), 404
+    # if orders is None:
+    # return jsonify({'message': 'User orders list is empty'}), 404
+    # return redirect('/user')
     # orders_str = Converter.convert_to_string(orders)
     # user_name = user['user_name']
     # return jsonify({'message': f"{user_name} orders: {orders_str}"}), 200
@@ -164,7 +165,8 @@ def delete_user_order():
 @check_user_login
 def delete_user_order_by_id(ord_id):
     if hndl.delete_user_order_from_db(ord_id):
-        return jsonify({'message': 'Order removed successfully'}), 201
+        # return jsonify({'message': 'Order removed successfully'}), 201
+        return redirect('/user/orders')
     else:
         return jsonify({'message': 'Cannot delete the Order'}), 404
 

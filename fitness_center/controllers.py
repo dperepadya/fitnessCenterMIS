@@ -1,13 +1,16 @@
 # from datetime import datetime
+from datetime import datetime
 
 from flask import Blueprint, jsonify, request, session, render_template, redirect
 from fitness_center import orm_handlers as hndl
+from mappers.order_mappers import normalize_time
 from models.order import Order
 from models.fitness_center import FitnessCenter
 from models.review import Review
 from models.schedule import Schedule
 from models.service import Service
 from models.trainer import Trainer
+from user.orm_handlers import add_user_order_to_db
 from utils.login_decorator import check_user_login, check_admin_rights, user_is_admin, user_is_logged_in
 from utils.time_slots import get_available_time_slots
 
@@ -137,10 +140,10 @@ def get_fitness_center_services(fc_id):
 # Get Fitness Center Service info ======================================
 
 
-@fitness_center_bp.get('/<int:fc_id>/services/<int:serv_id>')
+@fitness_center_bp.get('/<int:fc_id>/services/<int:service_id>')
 # @check_user_login
-def get_fitness_center_service_info(fc_id, serv_id):
-    fc_service = hndl.get_fitness_center_service_from_db(fc_id, serv_id)
+def get_fitness_center_service_info(fc_id, service_id):
+    fc_service = hndl.get_fitness_center_service_from_db(fc_id, service_id)
     if fc_service is None:
         return jsonify({'message': 'Fitness center service not found'}), 404
     # fc_service_str = Converter.convert_to_string(fc_service)
@@ -386,10 +389,10 @@ def add_fitness_center_service_trainer(fc_id, trainer_id):
 
 
 @fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>/order')
-def select_date(fc_id, service_id, trainer_id):
+def select_date(fc_id, trainer_id, service_id):
     # trainer_service_id = hndl.get_fitness_center_service_trainer_from_db(fc_id, service_id, trainer_id)
     return render_template('select_order_date.html', fc_id=fc_id, service_id=service_id,
-                           trainer_id=service_id)
+                           trainer_id=trainer_id)
 
 
 # 2nd Order endpoint: Select a time slot (start time) of desired reservation
@@ -407,7 +410,7 @@ def select_time(fc_id, trainer_id, service_id):
     # trainer_id = int(trainer_id)
     date = request.args.get('date')
     # if date is not None:
-    #    date = datetime.strptime(date, '%Y-%m-%d').strftime('%d.%m.%Y')
+    #    date = datetime.strptime(date, '%Y-%m-%d')  # .strftime('%d.%m.%Y')
     available_time_slots = get_available_time_slots(user_id, trainer_id, service_id, date)
     if available_time_slots is None:
         return jsonify({'message': 'Cannot find available time slots'}), 201
@@ -415,6 +418,30 @@ def select_time(fc_id, trainer_id, service_id):
                            fc_id=fc_id, service_id=service_id, trainer_id=service_id, date=date)
 
 
+@fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>/order')
+def add_order(fc_id, trainer_id, service_id):
+    user = session.get('user')
+    user_id = user['id']
+    # trainer_service_id = request.form['trainer_service_id']
+    date = request.form['date']
+    time_str = request.form['time']
+    time = normalize_time(time_str)
+    # iso_time = time.strftime("%H:%M:%S") + f".{time.microsecond:06d}"
+    # trainer_service = hndl.get_trainer_service(trainer_service_id)
+    # if trainer_service is None:
+    #     return None
+    # trainer_id = trainer_service['trainer_id']
+    # service_id = trainer_service['service_id']
+
+    order = Order(date, time, user_id, trainer_id, service_id)
+    if add_user_order_to_db(order):
+        # return jsonify({'message': 'Order added successfully'}), 201
+        return redirect('/user/orders')
+    else:
+        return jsonify({'message': 'Failed to add order'}), 500
+
+
+'''
 @fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>/order')
 @check_user_login
 def add_user_order():
@@ -427,27 +454,7 @@ def add_user_order():
         # return render_template('services_list.html', trainer_services=trainer_services)
     return redirect(f'/fitness_center/{fc_id}/services')
 
-
-@fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>/order')
-def add_order(fc_id, trainer_id, service_id):
-    user_id = session['user']['client_id']
-    # trainer_service_id = request.form['trainer_service_id']
-    date = request.form['date']
-    time = request.form['time']
-    # trainer_service = hndl.get_trainer_service(trainer_service_id)
-    # if trainer_service is None:
-    #     return None
-    # trainer_id = trainer_service['trainer_id']
-    # service_id = trainer_service['service_id']
-
-    order = Order(date, time, user_id, trainer_id, service_id)
-    if hndl.add_user_order_to_db(order):
-        return jsonify({'message': 'Order added successfully'}), 201
-    else:
-        return jsonify({'message': 'Failed to add order'}), 500
-
-
-
+'''
 
 
 # Trainer rating #############################################
