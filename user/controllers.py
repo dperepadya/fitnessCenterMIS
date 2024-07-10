@@ -145,7 +145,7 @@ def get_delete_user_order_form():
     orders = hndl.get_user_orders_from_db(user_id)
     if orders is None:
         return jsonify({'message': 'User orders list is empty'}), 404
-    return render_template('order_delete.html', user=user_id, orders=orders)
+    return render_template('../templates_arc/order_delete.html', user=user_id, orders=orders)
 
 
 @user_bp.post('/orders/delete')

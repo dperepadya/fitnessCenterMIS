@@ -22,7 +22,9 @@
     {% endif %}
     {% if is_admin %}
         <a href="/fitness_center/{{ service.fitness_center_id }}/services/{{ service.id }}/edit"><button>Edit</button></a>
-        <a href="/fitness_center/{{ service.fitness_center_id }}/services/{{ service.id }}/delete"><button>Delete</button></a>
+         <form action="/fitness_center/{{ service.fitness_center_id }}/services/{{ service.id }}/delete" method="post" style="display:inline;">
+            <button type="submit">Delete</button>
+        </form>
     {% endif %}
     {% if trainer_id >= 0 %}
         <a href="/fitness_center/{{ service.fitness_center_id }}/trainers/{{ service.id }}/services"><button>Back to Services</button></a>

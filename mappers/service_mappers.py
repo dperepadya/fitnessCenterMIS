@@ -33,10 +33,12 @@ def service_to_servicedb(service):
 def existing_service_to_servicedb(existing_service, service):
     if existing_service is None or service is None:
         return None
-    safe_assign(existing_service, 'id', service.id)
+    # safe_assign(existing_service, 'id', service.id)
     safe_assign(existing_service, 'name', service.name)
-    safe_assign(existing_service, 'age', service.age)
-    safe_assign(existing_service, 'gender', service.gender)
+    safe_assign(existing_service, 'duration', service.duration)
+    safe_assign(existing_service, 'price', service.price)
+    safe_assign(existing_service, 'description', service.description)
+    safe_assign(existing_service, 'max_attendees', service.max_attendees)
     safe_assign(existing_service, 'fitness_center_id', service.fitness_center_id)
 
 

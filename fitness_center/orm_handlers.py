@@ -12,7 +12,8 @@ from db_models.trainer_service import TrainerService
 from mappers.fitness_center_mappers import fc_to_fcdb, existing_fc_to_fcdb
 from mappers.review_mappers import review_to_reviewdb
 from mappers.schedule_mappers import schedule_to_scheduledb
-from mappers.service_mappers import service_to_servicedb
+from mappers.service_mappers import service_to_servicedb, existing_service_to_servicedb
+from mappers.trainer_mappers import trainer_to_trainerdb, existing_trainer_to_trainerdb
 
 
 def get_fitness_centers_from_db():
@@ -58,8 +59,7 @@ def modify_fitness_center_in_db(fc):
             existing_fc_to_fcdb(fitness_center, fc)
             db_session.commit()
             return True
-        else:
-            return False
+        return False
     except Exception as e:
         db_session.rollback()
         print(f"Error modifying fitness center: {e}")
@@ -103,12 +103,30 @@ def get_fitness_center_service_from_db(fc_id, serv_id):
         return None
 
 
+def modify_fitness_center_service_in_db(service):
+    if service is None:
+        return False
+    try:
+        fc_service = (db_session.query(Service)
+                      .filter(Service.fitness_center_id == service.fitness_center_id, Service.id == service.id)
+                      .first())
+        if fc_service:
+            existing_service_to_servicedb(fc_service, service)
+            db_session.commit()
+            return True
+        return False
+    except Exception as e:
+        db_session.rollback()
+        print(f"Error modifying fitness center service: {e}")
+        return False
+
+
 def add_fitness_center_service_to_db(service):
     if service is None:
         return False
     try:
         new_service = service_to_servicedb(service)
-        db_session.add(service)
+        db_session.add(new_service)
         db_session.commit()
         return True
     except Exception as e:
@@ -157,11 +175,28 @@ def get_fitness_center_trainer_from_db(fc_id, trainer_id):
         return None
 
 
+def modify_fitness_center_trainer_in_db(trainer):
+    try:
+        fc_trainer = (db_session.query(Trainer)
+                      .filter(Trainer.fitness_center_id == trainer.fitness_center_id, Trainer.id == trainer.id)
+                      .first())
+        if fc_trainer:
+            existing_trainer_to_trainerdb(fc_trainer, trainer)
+            db_session.commit()
+            return True
+        return False
+    except Exception as e:
+        db_session.rollback()
+        print(f"Error modifying fitness center trainer: {e}")
+        return False
+
+
 def add_fitness_center_trainer_to_db(trainer):
     if trainer is None:
         return False
     try:
-        db_session.add(trainer)
+        new_trainer = trainer_to_trainerdb(trainer)
+        db_session.add(new_trainer)
         db_session.commit()
         return True
     except Exception as e:
@@ -189,6 +224,7 @@ def delete_fitness_center_trainer_from_db(fc_id, trainer_id):
 def get_fitness_center_trainer_rating_from_db(fc_id, trainer_id):
     try:
         params = db_session.query(Client.name.label('client_name'),
+                                  Review.id.label('id'),
                                   Review.date.label('date'),
                                   Review.grade.label('grade'),
                                   Review.comment.label('comment'))
@@ -225,6 +261,7 @@ def modify_fitness_center_trainer_rating_in_db(fc_id, trainer_id):
 def get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id):
     try:
         params = db_session.query(Trainer.name.label('trainer_name'),
+                                  Schedule.id.label('id'),
                                   Schedule.date.label('date'),
                                   Schedule.start_time.label('start_time'),
                                   Schedule.end_time.label('end_time'))
@@ -241,6 +278,7 @@ def get_fitness_center_trainer_schedule_from_db(fc_id, trainer_id):
 def get_fitness_center_trainer_schedule_item_from_db(fc_id, trainer_id, schedule_id):
     try:
         params = db_session.query(Trainer.name.label('trainer_name'),
+                                  Schedule.id.label('id'),
                                   Schedule.date.label('date'),
                                   Schedule.start_time.label('start_time'),
                                   Schedule.end_time.label('end_time'))
@@ -248,7 +286,7 @@ def get_fitness_center_trainer_schedule_item_from_db(fc_id, trainer_id, schedule
                                .join(Schedule, Schedule.trainer_id == Trainer.id)
                                .filter(Trainer.fitness_center_id == fc_id, Trainer.id == trainer_id,
                                        Schedule.id == schedule_id)
-                               .all())
+                               .first())
         return fc_trainer_schedule
     except Exception as e:
         print(f"Error fetching trainer schedule: {e}")
@@ -383,6 +421,24 @@ def get_fitness_center_trainer_service_from_db(fc_id, trainer_id, service_id):
     except Exception as e:
         print(f"Error fetching service trainers from db: {e}")
         return None
+
+
+def get_unassigned_services(fc_id, trainer_id):
+    subquery = (db_session.query(TrainerService.service_id)
+                .filter_by(trainer_id=trainer_id).subquery())
+    services = (db_session.query(Service)
+                .filter(Service.fitness_center_id == fc_id, ~Service.id.in_(subquery))
+                .all())
+    return services
+
+
+def get_unassigned_trainers(fc_id, service_id):
+    subquery = (db_session.query(TrainerService.trainer_id)
+                .filter_by(service_id=service_id).subquery())
+    services = (db_session.query(Trainer)
+                .filter(Trainer.fitness_center_id == fc_id, ~Service.id.in_(subquery))
+                .all())
+    return services
 
 
 def add_fitness_center_trainer_and_service_to_db(trainer_id, service_id, capacity):

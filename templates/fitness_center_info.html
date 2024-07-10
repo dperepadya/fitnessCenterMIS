@@ -19,7 +19,9 @@
     <a href="/fitness_center/{{ fc.id }}/trainers"><button>Trainers</button></a>
     {% if is_admin %}
         <a href="/fitness_center/{{ fc.id }}/edit"><button>Edit</button></a>
-        <a href="/fitness_center/{{ fc.id }}/delete"><button>Delete</button></a>
+        <form action="/fitness_center/{{ fc.id }}/delete" method="post" style="display:inline;">
+            <button type="submit">Delete</button>
+        </form>
     {% endif %}
     <a href="/fitness_center"><button>Fitness centers</button></a>
     <a href="/"><button>Home</button></a>

@@ -29,7 +29,7 @@ def trainer_to_trainerdb(trainer):
 def existing_trainer_to_trainerdb(existing_trainer, trainer):
     if existing_trainer is None or trainer is None:
         return None
-    safe_assign(existing_trainer, 'id', trainer.id)
+    # safe_assign(existing_trainer, 'id', trainer.id)
     safe_assign(existing_trainer, 'name', trainer.name)
     safe_assign(existing_trainer, 'age', trainer.age)
     safe_assign(existing_trainer, 'gender', trainer.gender)

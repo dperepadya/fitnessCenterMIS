@@ -13,7 +13,9 @@
     <p><strong>Fitness center ID:</strong> {{ order.trainer_name }}</p>
     <p><strong>Date:</strong> {{ order.date }}</p>
     {% if is_logged %}
-        <a href="/user/orders/{{ ord_id }}/delete"><button>Delete</button></a>
+        <form action="/user/orders/{{ ord_id }}/delete" method="post" style="display:inline;">
+            <button type="submit">Delete</button>
+        </form>
     {% endif %}
         <a href="/user/orders"><button>Back to Orders</button></a>
     <a href="/"><button>Home</button></a>

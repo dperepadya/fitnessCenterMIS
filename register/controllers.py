@@ -1,4 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for
+
+from fitness_center.orm_handlers import get_fitness_centers_from_db
 from register import orm_handlers as hndl
 from models.user import User
 from celery_tasks import send_mail
@@ -9,7 +11,10 @@ register_bp = Blueprint('register', __name__)
 # Get a Registration form
 @register_bp.get('/')
 def get_user_registration_form():
-    return render_template('client_register.html')
+    fc_list = get_fitness_centers_from_db()
+    if fc_list is None:
+        return jsonify({'message': 'Fitness centers list is empty'}), 404
+    return render_template('client_register.html', fc_list=fc_list)
 
 
 # Add a user to DB
@@ -30,7 +35,8 @@ def add_user():
         msg = f"New client {user.name}: successfully registered"
         # print(user_data['email'], msg)
         subject = 'Successful registration at fitness center'
-        send_mail.delay(user_data['email'], subject, msg)
+        if False:
+            send_mail.delay(user_data['email'], subject, msg)
         # return jsonify({'message': msg}), 201
         return redirect("/login")
     else:
