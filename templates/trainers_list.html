@@ -42,7 +42,11 @@
     {% if is_admin %}
         <a href="/fitness_center/{{ fc_id }}/trainers/add"><button>Add</button></a>
     {% endif %}
-    <a href="/fitness_center/{{ fc_id }}"><button>Fitness center</button></a>
+    {% if service_id >=0 %}
+        <a href="/fitness_center/{{ fc_id }}/services/{{ service_id }}"><button>Back</button></a>
+    {% else  %}
+        <a href="/fitness_center/{{ fc_id }}"><button>Back</button></a>
+    {% endif %}
     <a href="/"><button>Home</button></a>
 </body>
 </html>

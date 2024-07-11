@@ -25,9 +25,10 @@
          <form action="/fitness_center/{{ service.fitness_center_id }}/services/{{ service.id }}/delete" method="post" style="display:inline;">
             <button type="submit">Delete</button>
         </form>
+        <a href="/fitness_center/{{ service.fitness_center_id }}/services/{{ service.id }}/addtrainer"><button>Assign a trainer</button></a>
     {% endif %}
     {% if trainer_id >= 0 %}
-        <a href="/fitness_center/{{ service.fitness_center_id }}/trainers/{{ service.id }}/services"><button>Back to Services</button></a>
+        <a href="/fitness_center/{{ service.fitness_center_id }}/trainers/{{ service.id }}/services"><button>Back to Trainers</button></a>
     {% else %}
         <a href="/fitness_center/{{ service.fitness_center_id }}/services"><button>Back to Services</button></a>
     {% endif %}

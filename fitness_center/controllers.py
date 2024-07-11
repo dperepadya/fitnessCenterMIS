@@ -378,7 +378,7 @@ def get_fitness_center_service_trainers(fc_id, service_id):
 def get_fitness_center_service_trainer(fc_id, service_id, trainer_id):
     fc_trainer = hndl.get_fitness_center_service_trainer_from_db(fc_id, service_id, trainer_id)
     if fc_trainer is None:
-        return jsonify({'message': f'Cannot find Service {service_id} Trainer {trainer_id}'}), 404
+        return jsonify({'message': f'Cannot find Trainer {trainer_id} of Service {service_id} '}), 404
     # fc_trainers_str = Converter.convert_to_string(fc_trainers)
     # user = session.get('user')
     # user_name = user['client_name']
@@ -407,9 +407,9 @@ def get_fitness_center_trainer_services(fc_id, trainer_id):
 @fitness_center_bp.get('/<int:fc_id>/trainers/<int:trainer_id>/services/<int:service_id>')
 # @check_user_login
 def get_fitness_center_trainer_service(fc_id, trainer_id, service_id):
-    fc_service = hndl.get_fitness_center_trainer_service_from_db(fc_id, service_id, trainer_id)
+    fc_service = hndl.get_fitness_center_trainer_service_from_db(fc_id, trainer_id, service_id)
     if fc_service is None:
-        return jsonify({'message': f'Cannot find Service {service_id} Trainer {trainer_id}'}), 404
+        return jsonify({'message': f'Cannot find Service {service_id} for Trainer {trainer_id}'}), 404
     # fc_trainers_str = Converter.convert_to_string(fc_trainers)
     # user = session.get('user')
     # user_name = user['client_name']
@@ -430,7 +430,7 @@ def get_add_fitness_center_trainer_service_form(fc_id, trainer_id):
 
 @fitness_center_bp.post('/<int:fc_id>/trainers/<int:trainer_id>/addservice')
 @check_admin_rights
-def add_fitness_center_service_trainer(fc_id, trainer_id):
+def add_fitness_center_trainer_service(fc_id, trainer_id):
     service_data = request.form
     service_id = service_data['service_id']
     capacity = service_data['capacity']
@@ -454,13 +454,13 @@ def get_add_fitness_center_service_trainer_form(fc_id, service_id):
 
 @fitness_center_bp.post('/<int:fc_id>/services/<int:service_id>/addtrainer')
 @check_admin_rights
-def add_fitness_center_service_trainer(fc_id, trainer_id):
+def add_fitness_center_service_trainer(fc_id, service_id):
     service_data = request.form
-    service_id = service_data['service_id']
+    trainer_id = service_data['trainer_id']
     capacity = service_data['capacity']
     if hndl.add_fitness_center_trainer_and_service_to_db(trainer_id, service_id, capacity):
         # return jsonify({'message': 'Fitness Center Service assigned successfully'}), 201
-        return redirect(f"/fitness_center/{fc_id}/services/{trainer_id}trainers")
+        return redirect(f"/fitness_center/{fc_id}/services/{service_id}trainers")
     else:
         return jsonify({'message': 'Cannot assign the Service to the Trainer'}), 404
 
