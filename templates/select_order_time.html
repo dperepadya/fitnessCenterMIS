@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Select Time</h1>
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    <p><strong>Service ID:</strong> {{ service_id }}</p>
+    <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
+    <form action="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/services/{{ service_id }}/order" method="post">
+        <input type="hidden" name="date" value="{{ date }}">
+        <label for="time">Available Time Slots:</label>
+        <select name="time" id="time" required>
+            {% for slot in available_time_slots %}
+                <option value="{{ slot }}">{{ slot }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Submit">
+    </form>
+    <a href="/"><button>Home</button></a>
+</body>
+</html>

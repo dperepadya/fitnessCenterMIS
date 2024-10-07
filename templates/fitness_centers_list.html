@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fitness centers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Fitness centers List</h1>
+    {% if not fitness_centers %}
+        <p>No fitness centers found.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in fitness_centers %}
+                <tr>
+                    <td><a href="/fitness_center/{{ row.id }}">{{ row.id }}</a></td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.address }}</td>
+                    <td>{{ row.phone }}</td>
+                    <td>{{ row.email }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {% if is_admin %}
+        <a href="/fitness_center/add"><button>Add</button></a>
+    {% endif %}
+    <a href="/"><button>Home</button></a>
+</body>
+</html>

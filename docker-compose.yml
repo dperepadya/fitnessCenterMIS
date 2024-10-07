@@ -1,0 +1,40 @@
+services:
+  web:
+    build: .
+    ports:
+      - 8080:8080
+    command: python3 app.py
+    depends_on:
+      - db
+      - rabbit_mq
+    environment:
+      DB_HOST: postgres
+      RABBIT_HOST: rabbit
+  celery_worker:
+    build: .
+    command: celery -A celery_tasks worker -l info -P eventlet
+    depends_on:
+      - rabbit_mq
+    environment:
+      DB_HOST: postgres
+      RABBIT_HOST: rabbit
+      C_FORCE_ROOT: true
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - 5432:5432
+    hostname: project_database
+  rabbit_mq:
+    image: rabbitmq:3-management
+    ports:
+      - 15672:15672
+      - 5672:5672
+    hostname: rabbit
+
+
+
+
+
+

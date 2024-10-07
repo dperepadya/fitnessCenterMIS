@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Services List</h1>
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    {% if trainer_id >=0 %}
+        <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
+    {% endif %}
+    {% if not services %}
+        <p>No services found.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Duration</th>
+                    <th>Price</th>
+                    <th>Description</th>
+                    <th>Max attendees</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in services %}
+                    <tr>
+                        {% if trainer_id >=0 %}
+                            <td><a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/services/{{ row.id }}">{{ row.id }}</a></td>
+                        {% else  %}
+                            <td><a href="/fitness_center/{{ fc_id }}/services/{{ row.id }}">{{ row.id }}</a></td>
+                        {% endif %}
+                        {% if is_admin and trainer_id >=0 and assign %}
+                            <td><a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/services/{{ row.id }}/add">{{ row.id }}</a></td>
+                        {% endif %}
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.duration }}</td>
+                        <td>{{ row.price }}</td>
+                        <td>{{ row.description }}</td>
+                        <td>{{ row.max_attendees }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {% if is_admin %}
+        <a href="/fitness_center/{{ fc_id }}/services/add"><button>Add</button></a>
+    {% endif %}
+    {% if trainer_id >=0 %}
+        <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}"><button>Back</button></a>
+    {% else  %}
+        <a href="/fitness_center/{{ fc_id }}"><button>Back</button></a>
+    {% endif %}
+    <a href="/fitness_center/{{ fc_id }}"><button>Fitness center</button></a>
+    <a href="/"><button>Home</button></a>
+</body>
+</html>

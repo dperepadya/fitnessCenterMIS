@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Service Information</h1>
+    <p><strong>ID:</strong> {{ service.id }}</p>
+    <p><strong>Name:</strong> {{ service.name }}</p>
+    <p><strong>Description:</strong> {{ service.description }}</p>
+    <p><strong>Duration:</strong> {{ service.duration }}</p>
+    <p><strong>Price:</strong> {{ service.price }}</p>
+    <p><strong>Max attendees:</strong> {{ service.max_attendees }}</p>
+    <p><strong>Fitness Center ID:</strong> {{ service.fitness_center_id }}</p>
+    <p><strong>Is logged:</strong> {{ is_logged }}</p>
+    <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
+    <a href="/fitness_center/{{ service.fitness_center_id }}/services/{{service.id}}/trainers"><button>Service Trainers</button></a>
+    {% if is_logged and trainer_id > 0 %}
+        <a href="/fitness_center/{{ service.fitness_center_id }}/trainers/{{ trainer_id }}/services/{{ service.id }}/order"><button>Order</button></a>
+    {% endif %}
+    {% if is_admin %}
+        <a href="/fitness_center/{{ service.fitness_center_id }}/services/{{ service.id }}/edit"><button>Edit</button></a>
+         <form action="/fitness_center/{{ service.fitness_center_id }}/services/{{ service.id }}/delete" method="post" style="display:inline;">
+            <button type="submit">Delete</button>
+        </form>
+        <a href="/fitness_center/{{ service.fitness_center_id }}/services/{{ service.id }}/addtrainer"><button>Assign a trainer</button></a>
+    {% endif %}
+    {% if trainer_id >= 0 %}
+        <a href="/fitness_center/{{ service.fitness_center_id }}/trainers/{{ service.id }}/services"><button>Back to Trainers</button></a>
+    {% else %}
+        <a href="/fitness_center/{{ service.fitness_center_id }}/services"><button>Back to Services</button></a>
+    {% endif %}
+    <a href="/"><button>Home</button></a>
+</body>
+</html>

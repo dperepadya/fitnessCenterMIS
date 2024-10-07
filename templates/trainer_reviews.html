@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Trainer Reviews</h1>
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
+    {% if not reviews %}
+        <p>No reviews found.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Date</th>
+                    <th>Grade</th>
+                    <th>Comment</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in reviews %}
+                    <tr>
+                        <td>{{ row.client_name }}</td>
+                        <td>{{ row.date }}</td>
+                        <td>{{ row.grade }}</td>
+                        <td>{{ row.comment }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/rating/add"><button>Add review</button></a>
+    <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}"><button>Back</button></a>
+    <a href="/"><button>Home</button></a>
+</body>
+</html>

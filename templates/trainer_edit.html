@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <form action="/fitness_center/{{ trainer['fitness_center_id'] }}/trainers/{{ trainer['id'] }}/edit" method="post">
+        <input type="hidden" name="fc_id" value="{{ trainer['fitness_center_id'] }}">
+        <input type="hidden" name="trainer_id" value="{{ trainer['id'] }}">
+        <label for="name">Name:       </label>
+        <input type="text" id="name" name="name" value="{{ trainer['name'] }}" required><br>
+        <label for="age">Age:  </label>
+        <input type="number" id="age" name="age" value="{{ trainer['age']}}" step="1" required><br>
+        <label for="name">Gender:       </label>
+        <input type="text" id="gender" name="gender" value="{{ trainer['gender'] }}" required><br>
+        <input type="submit" value="Submit">
+    </form>
+    <a href="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}"><button>Back</button></a>
+    <a href="/"><button>Home</button></a>
+</body>
+</html>

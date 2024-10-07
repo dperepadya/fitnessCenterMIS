@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Select Date</h1>
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    <p><strong>Service ID:</strong> {{ service_id }}</p>
+    <p><strong>Trainer ID:</strong> {{ trainer_id }}</p>
+    <form action="/fitness_center/{{ fc_id }}/trainers/{{ trainer_id }}/services/{{ service_id }}/select_time" method="get">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+        <input type="submit" value="Next">
+    </form>
+    <a href="/"><button>Home</button></a>
+</body>
+</html>

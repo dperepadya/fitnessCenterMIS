@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Welcome to Fitness Center</h1>
+    <div>
+        <a href="/register"><button>Register</button></a>
+        {% if user_is_logged_in %}
+            <a href="/user"><button>Client info</button></a>
+            <a href="/logout"><button>Logout</button></a>
+        {%  else %}
+        <a href="/login"><button>Login</button></a>
+        {% endif %}
+        <a href="/fitness_center"><button>Fitness centers</button></a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Trainers List</h1>
+    <p><strong>Fitness center ID:</strong> {{ fc_id }}</p>
+    {% if service_id >=0 %}
+        <p><strong>Service ID:</strong> {{ service_id }}</p>
+    {% endif %}
+    {% if not trainers %}
+        <p>No trainers found.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in trainers %}
+                    <tr>
+                        {% if service_id >=0 %}
+                            <td><a href="/fitness_center/{{ fc_id }}/services/{{ service_id }}/trainers/{{ row.id }}">{{ row.id }}</a></td>
+                        {% else %}
+                            <td><a href="/fitness_center/{{ fc_id }}/trainers/{{ row.id }}">{{ row.id }}</a></td>
+                        {% endif %}
+                        <td>{{ row.name }}</td>
+                        <td>{{ row.age }}</td>
+                        <td>{{ row.gender }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    {% if is_admin %}
+        <a href="/fitness_center/{{ fc_id }}/trainers/add"><button>Add</button></a>
+    {% endif %}
+    {% if service_id >=0 %}
+        <a href="/fitness_center/{{ fc_id }}/services/{{ service_id }}"><button>Back</button></a>
+    {% else  %}
+        <a href="/fitness_center/{{ fc_id }}"><button>Back</button></a>
+    {% endif %}
+    <a href="/"><button>Home</button></a>
+</body>
+</html>
