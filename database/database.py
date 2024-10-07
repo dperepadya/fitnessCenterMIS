@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 
 
 host = os.environ.get('DB_HOST', 'localhost')
-path = f"postgresql+psycopg2://postgres:example@{host}:5432"
+path = f"postgresql+psycopg2://postgress:example@{host}:5432"
 # engine = create_engine(path)
 engine = create_engine('sqlite:///fitnessdb.db')
 
