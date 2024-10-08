@@ -54,6 +54,6 @@ The project supports both:
 
 The project includes a `docker-compose.yml` file for running the application, Celery workers, RabbitMQ, and PostgreSQL database.
 
-1. **Build and Start Containers:**
+**Build and Start Containers:**
    ```bash
    docker-compose up --build
